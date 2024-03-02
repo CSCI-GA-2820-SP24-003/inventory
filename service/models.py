@@ -3,6 +3,7 @@ Models for YourResourceModel
 
 All of the models are stored in this module
 """
+
 import logging
 from flask_sqlalchemy import SQLAlchemy
 
@@ -13,30 +14,34 @@ db = SQLAlchemy()
 
 
 class DataValidationError(Exception):
-    """ Used for an data validation errors when deserializing """
+    """Used for an data validation errors when deserializing"""
 
 
-class YourResourceModel(db.Model):
+class Inventory(db.Model):
     """
-    Class that represents a YourResourceModel
+    Class that represents a Inventory
     """
 
     ##################################################
     # Table Schema
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+    inventory_name = db.Column(db.String(63), nullable=False)
+    category = db.Column(db.String(63), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
 
-    # Todo: Place the rest of your schema here...
+    ##################################################
+    # INSTANCE METHODS
+    ##################################################
 
     def __repr__(self):
-        return f"<YourResourceModel {self.name} id=[{self.id}]>"
+        return f"<Inventory {self.inventory_name} id=[{self.id}]>"
 
     def create(self):
         """
-        Creates a YourResourceModel to the database
+        Creates a Inventory to the database
         """
-        logger.info("Creating %s", self.name)
+        logger.info("Creating %s", self.inventory_name)
         self.id = None  # pylint: disable=invalid-name
         try:
             db.session.add(self)
@@ -48,9 +53,11 @@ class YourResourceModel(db.Model):
 
     def update(self):
         """
-        Updates a YourResourceModel to the database
+        Updates a Inventory to the database
         """
-        logger.info("Saving %s", self.name)
+        logger.info("Saving %s", self.inventory_name)
+        if not self.id:
+            raise DataValidationError("Update called with empty ID field")
         try:
             db.session.commit()
         except Exception as e:
@@ -59,8 +66,8 @@ class YourResourceModel(db.Model):
             raise DataValidationError(e) from e
 
     def delete(self):
-        """ Removes a YourResourceModel from the data store """
-        logger.info("Deleting %s", self.name)
+        """Removes a Inventory from the data store"""
+        logger.info("Deleting %s", self.inventory_name)
         try:
             db.session.delete(self)
             db.session.commit()
@@ -69,28 +76,41 @@ class YourResourceModel(db.Model):
             logger.error("Error deleting record: %s", self)
             raise DataValidationError(e) from e
 
-    def serialize(self):
-        """ Serializes a YourResourceModel into a dictionary """
-        return {"id": self.id, "name": self.name}
+    def serialize(self) -> dict:
+        """Serializes a Inventory into a dictionary"""
+        return {
+            "id": self.id,
+            "inventory_name": self.inventory_name,
+            "category": self.category,
+            "quantity": self.quantity,
+        }
 
-    def deserialize(self, data):
+    def deserialize(self, data: dict):
         """
-        Deserializes a YourResourceModel from a dictionary
+        Deserializes a Inventory from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.name = data["name"]
+            self.inventory_name = data["inventory_name"]
+            self.category = data["category"]
+            if isinstance(data["quantity"], int):
+                self.quantity = data["quantity"]
+            else:
+                raise DataValidationError(
+                    "Invalid type for int [quantity]: " + str(type(data["quantity"]))
+                )
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: missing " + error.args[0]
+                "Invalid Inventory: missing " + error.args[0]
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: body of request contained bad or no data " + str(error)
+                "Invalid Inventory: body of request contained bad or no data "
+                + str(error)
             ) from error
         return self
 
@@ -100,22 +120,34 @@ class YourResourceModel(db.Model):
 
     @classmethod
     def all(cls):
-        """ Returns all of the YourResourceModels in the database """
-        logger.info("Processing all YourResourceModels")
+        """Returns all of the Inventories in the database"""
+        logger.info("Processing all Inventories")
         return cls.query.all()
 
     @classmethod
-    def find(cls, by_id):
-        """ Finds a YourResourceModel by it's ID """
-        logger.info("Processing lookup for id %s ...", by_id)
-        return cls.query.get(by_id)
+    def find(cls, inventory_id: int):
+        """Finds a Inventories by it's ID"""
+        logger.info("Processing lookup for id %s ...", inventory_id)
+        return cls.query.get(inventory_id)
 
     @classmethod
-    def find_by_name(cls, name):
-        """Returns all YourResourceModels with the given name
+    def find_by_inventory_name(cls, name: str) -> list:
+        """Returns all Inventories with the given name
 
         Args:
-            name (string): the name of the YourResourceModels you want to match
+            name (string): the name of the Inventories you want to match
         """
         logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+        return cls.query.filter(cls.inventory_name == name)
+
+    @classmethod
+    def find_by_category(cls, category: str) -> list:
+        """Returns all of the Inventories in a category"""
+        logger.info("Processing category query for %s ...", category)
+        return cls.query.filter(cls.category == category)
+
+    @classmethod
+    def find_by_quantity(cls, quantity: int) -> list:
+        """Returns all of the Inventories in a quantity"""
+        logger.info("Processing quantity query for %s ...", quantity)
+        return cls.query.filter(cls.quantity == quantity)
