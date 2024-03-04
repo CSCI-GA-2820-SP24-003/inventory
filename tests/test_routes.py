@@ -102,3 +102,19 @@ class TestYourResourceService(TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         self.assertIn("Inventory not found", resp.data.decode())
+
+    def test_update_pet(self):
+        """It should Update an existing Inventory"""
+        # create a inventory to update
+        test_inventory = InventoryFactory()
+        response = self.client.post(BASE_URL, json=test_inventory.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the pet
+        new_inventory = response.get_json()
+        logging.debug(new_inventory)
+        new_inventory["category"] = "unknown"
+        response = self.client.put(f"{BASE_URL}/{new_inventory['id']}", json=new_inventory)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_inventory = response.get_json()
+        self.assertEqual(updated_inventory["category"], "unknown")

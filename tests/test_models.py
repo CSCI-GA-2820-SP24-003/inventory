@@ -158,7 +158,7 @@ class TestInventoryModel(TestCaseBase):
         self.assertIn("quantity", data)
         self.assertEqual(data["quantity"], inventory.quantity)
 
-    def test_deserialize_a_pet(self):
+    def test_deserialize_a_inventory(self):
         """It should de-serialize a Inventory"""
         data = InventoryFactory().serialize()
         inventory = Inventory()

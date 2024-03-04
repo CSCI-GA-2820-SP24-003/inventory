@@ -67,6 +67,10 @@ def list_inventory():
     app.logger.info("Returning %d inventory", len(results))
     return jsonify(results), status.HTTP_200_OK
 
+
+######################################################################
+# DELETE A INVENTORY
+######################################################################
 @app.route('/inventory/<int:id>', methods=['DELETE'])
 def delete_inventory(id):
     """
@@ -90,3 +94,59 @@ def delete_inventory(id):
     
     # Return a response with 204 No Content status code
     return 'deleted successfully', status.HTTP_204_NO_CONTENT
+
+
+######################################################################
+# UPDATE AN EXISTING INVENTORY
+######################################################################
+@app.route("/inventory/<int:id>", methods=["PUT"])
+def update_inventories(id):
+    """
+    Update a Inventory
+
+    This endpoint will update a Inventory based the body that is posted
+    """
+    app.logger.info("Request to update inventory with id: %d", id)
+    check_content_type("application/json")
+
+    inventory = Inventory.find(id)
+    if not inventory:
+        error(status.HTTP_404_NOT_FOUND, f"Inventory with id: '{id}' was not found.")
+
+    inventory.deserialize(request.get_json())
+    inventory.id = id
+    inventory.update()
+
+    app.logger.info("Inventory with ID: %d updated.", inventory.id)
+    return jsonify(inventory.serialize()), status.HTTP_200_OK
+
+
+######################################################################
+# Checks the ContentType of a request
+######################################################################
+def check_content_type(content_type):
+    """Checks that the media type is correct"""
+    if "Content-Type" not in request.headers:
+        app.logger.error("No Content-Type specified.")
+        error(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            f"Content-Type must be {content_type}",
+        )
+
+    if request.headers["Content-Type"] == content_type:
+        return
+
+    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    error(
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        f"Content-Type must be {content_type}",
+    )
+
+
+######################################################################
+# Logs error messages before aborting
+######################################################################
+def error(status_code, reason):
+    """Logs the error and then aborts"""
+    app.logger.error(reason)
+    abort(status_code, reason)   
