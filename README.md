@@ -1,10 +1,10 @@
-# NYU DevOps Project Template
+# NYU DevOps Project Inventory Squad
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
 
-This is a skeleton you can use to start your projects
-
+<details>
+<summary>Template Information That may be Deleted</summary>
 ## Overview
 
 This project template contains starter code for your class project. The `/service` folder contains your `models.py` file for your model and a `routes.py` file for your service. The `/tests` folder has test case starter code for testing the model and the service separately. All you need to do is add your functionality. You can use the [lab-flask-tdd](https://github.com/nyu-devops/lab-flask-tdd) for code examples to copy from.
@@ -56,6 +56,27 @@ tests/                     - test cases package
 ├── test_models.py         - test suite for business models
 └── test_routes.py         - test suite for service routes
 ```
+</details>
+
+
+## Description
+
+The inventory resource keeps track of how many of each product we have in our warehouse. At a minimum it will reference a product and the quantity on hand. Inventory also tracks restock levels and the condition of the item (i.e., new, open box, used). Restock levels will help you know when to order more products. Being able to query products by their condition (e.g., new, used) is very useful.
+
+### Database Schema
+| Column | Data type | Condition |
+| --- | --- | --- |
+| `id` | `<integer>` | `id > 0` |
+| `quantity` | `<integer>` | `quantity > 0` |
+| `inventory_name` | `<string>` | `name = string` |
+| `category` | `<string>` | `category = string` |
+
+### API endpoints
+
+| Method | URI | Description | Content-Type | Sample Payload |
+| --- | --- | ------ | --- | ------- |
+| `GET` | `/api/inventory/` | List all items in the inventory | N/A | N/A |
+| `DELETE` | `/api/inventory/<int:id>` | Given the correct `id` this deletes the entry | N/A | N/A |
 
 ## License
 
