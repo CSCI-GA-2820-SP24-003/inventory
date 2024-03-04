@@ -7,10 +7,13 @@ from unittest import TestCase
 from wsgi import app
 from service.common import status
 from service.models import db, Inventory
+from .factories import InventoryFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
+
+BASE_URL = "/inventory"
 
 
 ######################################################################
@@ -45,6 +48,22 @@ class TestYourResourceService(TestCase):
         """ This runs after each test """
         db.session.remove()
 
+    def _create_items(self, count):
+        """Factory method to create items in bulk"""
+        items = []
+        for _ in range(count):
+            test_item = InventoryFactory()
+            response = self.client.post(BASE_URL, json=test_item.serialize())
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_201_CREATED,
+                "Could not create test item",
+            )
+            new_item = response.get_json()
+            test_item.id = new_item["id"]
+            items.append(test_item)
+        return items
+
     ######################################################################
     #  P L A C E   T E S T   C A S E S   H E R E
     ######################################################################
@@ -53,6 +72,14 @@ class TestYourResourceService(TestCase):
         """ It should call the home page """
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+    def test_get_item_list(self):
+        """It should Get a list of items"""
+        self._create_items(5)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 5)
 
     def test_delete_inventory_success(self):
         """ Test deleting an inventory """
@@ -75,4 +102,3 @@ class TestYourResourceService(TestCase):
 
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         self.assertIn("Inventory not found", resp.data.decode())
-
