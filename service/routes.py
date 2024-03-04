@@ -15,10 +15,10 @@
 ######################################################################
 
 """
-Pet Store Service
+Inventory Store Service
 
 This service implements a REST API that allows you to Create, Read, Update
-and Delete Pets from the inventory of pets in the PetShop
+and Delete Items from the inventory of Items in the InventoryShop
 """
 
 from flask import jsonify, request, url_for, abort
@@ -43,4 +43,26 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-# Todo: Place your REST API code here ...
+######################################################################
+# LIST ALL ITEMS
+######################################################################
+@app.route("/inventory", methods=["GET"])
+def list_inventory():
+    """Returns all of the Items"""
+    app.logger.info("Request for item list")
+
+    inventory = []
+
+    # See if any query filters were passed in
+    category = request.args.get("category")
+    name = request.args.get("name")
+    if category:
+        inventory = Inventory.find_by_category(category)
+    elif name:
+        inventory = Inventory.find_by_name(name)
+    else:
+        inventory = Inventory.all()
+
+    results = [item.serialize() for item in inventory]
+    app.logger.info("Returning %d inventory", len(results))
+    return jsonify(results), status.HTTP_200_OK
