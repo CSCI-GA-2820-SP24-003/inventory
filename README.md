@@ -57,6 +57,25 @@ tests/                     - test cases package
 └── test_routes.py         - test suite for service routes
 ```
 
+
+## Description
+
+The inventory resource keeps track of how many of each product we have in our warehouse. At a minimum it will reference a product and the quantity on hand. Inventory also tracks restock levels and the condition of the item (i.e., new, open box, used). Restock levels will help you know when to order more products. Being able to query products by their condition (e.g., new, used) is very useful.
+
+### Database Schema
+| Column | Data type | Condition |
+| --- | --- | --- |
+| `id` | `<integer>` | `id > 0` |
+| `quantity` | `<integer>` | `quantity > 0` |
+| `inventory_name` | `<string>` | `name = string` |
+| `category` | `<string>` | `category = string` |
+
+### API endpoints
+
+| Method | URI | Description | Content-Type | Sample Payload |
+| --- | --- | ------ | --- | ------- |
+| `DELETE` | `/api/inventory/<int:id>` | Given the correct `id` this deletes the entry | N/A | N/A |
+
 ## License
 
 Copyright (c) 2016, 2024 [John Rofrano](https://www.linkedin.com/in/JohnRofrano/). All rights reserved.
