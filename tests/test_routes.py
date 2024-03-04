@@ -54,4 +54,25 @@ class TestYourResourceService(TestCase):
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
-    # Todo: Add your test cases here...
+    def test_delete_inventory_success(self):
+        """ Test deleting an inventory """
+        # Create a test inventory item
+        inventory = Inventory(inventory_name="Test Product", category="Test Category", quantity=10)
+        inventory.create()
+        inventory_id = inventory.id
+
+        resp = self.client.delete(f"/inventory/{inventory_id}")
+
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        deleted_inventory = Inventory.find(inventory_id)
+        self.assertIsNone(deleted_inventory)
+    
+    def test_delete_non_existent_inventory(self):
+        """ Test deleting a non-existent inventory """
+        # Make a DELETE request to delete an inventory item with a non-existent ID
+        non_existent_inventory_id = 99999
+        resp = self.client.delete(f"/inventory/{non_existent_inventory_id}")
+
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn("Inventory not found", resp.data.decode())
+

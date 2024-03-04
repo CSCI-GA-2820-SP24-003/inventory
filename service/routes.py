@@ -43,4 +43,26 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
-# Todo: Place your REST API code here ...
+@app.route('/inventory/<int:id>', methods=['DELETE'])
+def delete_inventory(id):
+    """
+    Delete an Inventory.
+    This endpoint will delete an Inventory based on the id.
+    """
+    app.logger.info("Request to delete inventory with key ({})".format(id))
+    
+    # Find the inventory by id
+    inventory = Inventory.find(id)
+    
+    if inventory is None:
+        # If inventory is not found, return 404 Not Found
+        app.logger.error("Inventory with id {} not found".format(id))
+        return jsonify(message="Inventory not found"), status.HTTP_404_NOT_FOUND
+    
+    # Delete the inventory
+    inventory.delete()
+    
+    app.logger.info("Inventory with id {} deleted".format(id))
+    
+    # Return a response with 204 No Content status code
+    return 'deleted successfully', status.HTTP_204_NO_CONTENT
