@@ -103,14 +103,14 @@ class TestYourResourceService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
         self.assertIn("Inventory not found", resp.data.decode())
 
-    def test_update_pet(self):
+    def test_update_inventory(self):
         """It should Update an existing Inventory"""
         # create a inventory to update
         test_inventory = InventoryFactory()
         response = self.client.post(BASE_URL, json=test_inventory.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # update the pet
+        # update the inventory
         new_inventory = response.get_json()
         logging.debug(new_inventory)
         new_inventory["category"] = "unknown"
@@ -118,3 +118,29 @@ class TestYourResourceService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_inventory = response.get_json()
         self.assertEqual(updated_inventory["category"], "unknown")
+
+    def test_create_inventory(self):
+        """It should Create a new Inventory"""
+        test_inventory = InventoryFactory()
+        logging.debug("Test Inventory: %s", test_inventory.serialize())
+        response = self.client.post(BASE_URL, json=test_inventory.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Make sure location header is set
+        location = response.headers.get("Location", None)
+        self.assertIsNotNone(location)
+
+        # Check the data is correct
+        new_inventory = response.get_json()
+        self.assertEqual(new_inventory["inventory_name"], test_inventory.inventory_name)
+        self.assertEqual(new_inventory["category"], test_inventory.category)
+        self.assertEqual(new_inventory["quantity"], test_inventory.quantity)
+
+        # Todo: uncommented this code when get_inventory is implemented
+        # Check that the location header was correct
+        # response = self.client.get(location)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # new_inventory = response.get_json()
+        # self.assertEqual(new_inventory["inventory_name"], test_inventory.inventory_name)
+        # self.assertEqual(new_inventory["category"], test_inventory.category)
+        # self.assertEqual(new_inventory["quantity"], test_inventory.quantity)

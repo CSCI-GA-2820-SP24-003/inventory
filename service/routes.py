@@ -69,6 +69,31 @@ def list_inventory():
 
 
 ######################################################################
+# CREATE A NEW INVENTORY
+######################################################################
+@app.route("/inventory", methods=["POST"])
+def create_inventory():
+    """
+    Creates an Inventory
+
+    This endpoint will create a Inventory based the data in the body that is posted
+    """
+    app.logger.info("Request to create an inventory")
+    check_content_type("application/json")
+
+    inventory = Inventory()
+    inventory.deserialize(request.get_json())
+    inventory.create()
+    message = inventory.serialize()
+    # Todo: uncomment this code when get_inventory
+    # location_url = url_for("get_inventory", inventory_id=inventory.id, _external=True)
+    location_url = "unknown"
+
+    app.logger.info("Inventory with ID: %d created.", inventory.id)
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+
+
+######################################################################
 # DELETE A INVENTORY
 ######################################################################
 @app.route('/inventory/<int:id>', methods=['DELETE'])
@@ -77,7 +102,7 @@ def delete_inventory(id):
     Delete an Inventory.
     This endpoint will delete an Inventory based on the id.
     """
-    app.logger.info("Request to delete inventory with key ({})".format(id))
+    app.logger.info("Request to delete inventory with key ({})".format(id)) 
     
     # Find the inventory by id
     inventory = Inventory.find(id)
