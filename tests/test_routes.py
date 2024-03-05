@@ -94,7 +94,7 @@ class TestYourResourceService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         deleted_inventory = Inventory.find(inventory_id)
         self.assertIsNone(deleted_inventory)
-    
+
     def test_delete_non_existent_inventory(self):
         """ Test deleting a non-existent inventory """
         # Make a DELETE request to delete an inventory item with a non-existent ID
@@ -133,7 +133,7 @@ class TestYourResourceService(TestCase):
             f"/inventory/{non_existent_inventory_id}", json=updated_inventory
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_list_inventory_with_category_filter(self):
         """Test listing inventory with category filter"""
         test_inventory_1 = InventoryFactory(category="Category1")
@@ -150,7 +150,7 @@ class TestYourResourceService(TestCase):
         self.assertEqual(len(data), 2)
         for item in data:
             self.assertEqual(item["category"], "Category1")
-    
+
     def test_list_inventory_with_name_filter(self):
         """Test listing inventory with name filter"""
         test_inventory_1 = InventoryFactory(inventory_name="Item1")
@@ -168,7 +168,6 @@ class TestYourResourceService(TestCase):
         self.assertEqual(len(data), 2)
         for item in data:
             self.assertEqual(item["inventory_name"], "Item1")
-
 
     def test_create_inventory(self):
         """It should Create a new Inventory"""
