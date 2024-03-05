@@ -59,7 +59,7 @@ def list_inventory():
     if category:
         inventory = Inventory.find_by_category(category)
     elif name:
-        inventory = Inventory.find_by_name(name)
+        inventory = Inventory.find_by_inventory_name(name)
     else:
         inventory = Inventory.all()
 
