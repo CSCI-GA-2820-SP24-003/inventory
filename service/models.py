@@ -101,8 +101,6 @@ class Inventory(db.Model):
                 raise DataValidationError(
                     "Invalid type for int [quantity]: " + str(type(data["quantity"]))
                 )
-        except AttributeError as error:
-            raise DataValidationError("Invalid attribute: " + error.args[0]) from error
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Inventory: missing " + error.args[0]
