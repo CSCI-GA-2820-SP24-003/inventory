@@ -110,8 +110,7 @@ class TestYourResourceService(TestCase):
         non_existent_inventory_id = 99999
         resp = self.client.delete(f"/inventory/{non_existent_inventory_id}")
 
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertIn("Inventory not found", resp.data.decode())
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_update_inventory(self):
         """It should Update an existing Inventory"""

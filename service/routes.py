@@ -126,9 +126,7 @@ def delete_inventory(id):
     inventory = Inventory.find(id)
 
     if inventory is None:
-        # If inventory is not found, return 404 Not Found
-        app.logger.error("Inventory with id {} not found".format(id))
-        return jsonify(message="Inventory not found"), status.HTTP_404_NOT_FOUND
+        return '', status.HTTP_204_NO_CONTENT
 
     # Delete the inventory
     inventory.delete()
@@ -136,7 +134,7 @@ def delete_inventory(id):
     app.logger.info("Inventory with id {} deleted".format(id))
 
     # Return a response with 204 No Content status code
-    return 'deleted successfully', status.HTTP_204_NO_CONTENT
+    return '', status.HTTP_204_NO_CONTENT
 
 
 ######################################################################
