@@ -21,7 +21,7 @@ This service implements a REST API that allows you to Create, Read, Update
 and Delete Items from the inventory of Items in the InventoryShop
 """
 
-from flask import jsonify, request, url_for, abort
+from flask import jsonify, request, abort
 from flask import current_app as app  # Import Flask application
 from service.models import Inventory
 from service.common import status  # HTTP Status Codes
@@ -59,7 +59,7 @@ def list_inventory():
     if category:
         inventory = Inventory.find_by_category(category)
     elif name:
-        inventory = Inventory.find_by_name(name)
+        inventory = Inventory.find_by_inventory_name(name)
     else:
         inventory = Inventory.all()
 
@@ -102,21 +102,21 @@ def delete_inventory(id):
     Delete an Inventory.
     This endpoint will delete an Inventory based on the id.
     """
-    app.logger.info("Request to delete inventory with key ({})".format(id)) 
-    
+    app.logger.info("Request to delete inventory with key ({})".format(id))
+
     # Find the inventory by id
     inventory = Inventory.find(id)
-    
+
     if inventory is None:
         # If inventory is not found, return 404 Not Found
         app.logger.error("Inventory with id {} not found".format(id))
         return jsonify(message="Inventory not found"), status.HTTP_404_NOT_FOUND
-    
+
     # Delete the inventory
     inventory.delete()
-    
+
     app.logger.info("Inventory with id {} deleted".format(id))
-    
+
     # Return a response with 204 No Content status code
     return 'deleted successfully', status.HTTP_204_NO_CONTENT
 
@@ -174,4 +174,4 @@ def check_content_type(content_type):
 def error(status_code, reason):
     """Logs the error and then aborts"""
     app.logger.error(reason)
-    abort(status_code, reason)   
+    abort(status_code, reason)
