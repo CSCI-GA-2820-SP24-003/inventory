@@ -75,7 +75,7 @@ The inventory resource keeps track of how many of each product we have in our wa
 ## API endpoints
 
 | Method | URI | Description | Content-Type |
-| --- | --- | ------ | --- | ------- |
+| --- | --- | ------ | --- |
 | `GET` | `/inventory/` | List all items in the inventory | N/A |
 | `DELETE` | `/inventory/<int:id>` | Given the correct `id` this deletes the entry | N/A |
 | `PUT` | `/inventory/<int:id>` | Given the correct `id` this updates the entry | N/A |
