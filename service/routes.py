@@ -94,6 +94,26 @@ def create_inventory():
 
 
 ######################################################################
+# READ AN INVENTORY
+######################################################################
+@app.route("/inventory/<int:id>", methods=["GET"])
+def get_inventory(id):
+    """
+    Retrieve a single Inventory
+
+    This endpoint will return a Inventory based on it's id
+    """
+    app.logger.info("Request for inventory with id: %s", id)
+
+    inventory = Inventory.find(id)
+    if not inventory:
+        error(status.HTTP_404_NOT_FOUND, f"Inventory with id '{id}' was not found.")
+
+    app.logger.info("Returning inventory: %s", inventory.inventory_name)
+    return jsonify(inventory.serialize()), status.HTTP_200_OK
+
+
+######################################################################
 # DELETE A INVENTORY
 ######################################################################
 @app.route('/inventory/<int:id>', methods=['DELETE'])

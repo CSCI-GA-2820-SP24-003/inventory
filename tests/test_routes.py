@@ -81,6 +81,15 @@ class TestYourResourceService(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 5)
 
+    def test_get_inventory(self):
+        """It should Get a single Inventory"""
+        # get the id of a inventory
+        test_inventory = self._create_items(1)[0]
+        response = self.client.get(f"{BASE_URL}/{test_inventory.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["inventory_name"], test_inventory.inventory_name)
+
     def test_delete_inventory_success(self):
         """ Test deleting an inventory """
         # Create a test inventory item
