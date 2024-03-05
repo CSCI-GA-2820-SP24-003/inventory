@@ -202,3 +202,26 @@ class TestYourResourceService(TestCase):
         self.assertEqual(new_inventory["inventory_name"], test_inventory.inventory_name)
         self.assertEqual(new_inventory["category"], test_inventory.category)
         self.assertEqual(new_inventory["quantity"], test_inventory.quantity)
+    
+
+    def test_get_inventory_not_found(self):
+        """It should not Get a Inventory thats not found"""
+        response = self.client.get(f"{BASE_URL}/0")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        data = response.get_json()
+        logging.debug("Response data = %s", data)
+        self.assertIn("was not found", data["message"])
+
+    ######################################################################
+    #  T E S T   S A D   P A T H S
+    ######################################################################
+
+    def test_create_inventory_no_content_type(self):
+        """It should not Create a Inventory with no content type"""
+        response = self.client.post(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_create_inventory_wrong_content_type(self):
+        """It should not Create a Inventory with the wrong content type"""
+        response = self.client.post(BASE_URL, data="hello", content_type="text/html")
+        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
