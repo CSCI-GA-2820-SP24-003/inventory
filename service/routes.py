@@ -21,7 +21,7 @@ This service implements a REST API that allows you to Create, Read, Update
 and Delete Items from the inventory of Items in the InventoryShop
 """
 
-from flask import jsonify, request, abort
+from flask import jsonify, request, url_for, abort
 from flask import current_app as app  # Import Flask application
 from service.models import Inventory
 from service.common import status  # HTTP Status Codes
@@ -85,9 +85,7 @@ def create_inventory():
     inventory.deserialize(request.get_json())
     inventory.create()
     message = inventory.serialize()
-    # Todo: uncomment this code when get_inventory
-    # location_url = url_for("get_inventory", inventory_id=inventory.id, _external=True)
-    location_url = "unknown"
+    location_url = url_for("get_inventory", id=inventory.id, _external=True)
 
     app.logger.info("Inventory with ID: %d created.", inventory.id)
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}

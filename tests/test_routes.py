@@ -96,12 +96,12 @@ class TestYourResourceService(TestCase):
         test_inventory = InventoryFactory()
         response = self.client.post(BASE_URL, json=test_inventory.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        inventory_id = response.json["id"]
+        id = response.json["id"]
 
-        resp = self.client.delete(f"/inventory/{inventory_id}")
+        resp = self.client.delete(f"/inventory/{id}")
 
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-        deleted_inventory = Inventory.find(inventory_id)
+        deleted_inventory = Inventory.find(test_inventory.id)
         self.assertIsNone(deleted_inventory)
 
     def test_delete_non_existent_inventory(self):
@@ -195,11 +195,10 @@ class TestYourResourceService(TestCase):
         self.assertEqual(new_inventory["category"], test_inventory.category)
         self.assertEqual(new_inventory["quantity"], test_inventory.quantity)
 
-        # Todo: uncommented this code when get_inventory is implemented
         # Check that the location header was correct
-        # response = self.client.get(location)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # new_inventory = response.get_json()
-        # self.assertEqual(new_inventory["inventory_name"], test_inventory.inventory_name)
-        # self.assertEqual(new_inventory["category"], test_inventory.category)
-        # self.assertEqual(new_inventory["quantity"], test_inventory.quantity)
+        response = self.client.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_inventory = response.get_json()
+        self.assertEqual(new_inventory["inventory_name"], test_inventory.inventory_name)
+        self.assertEqual(new_inventory["category"], test_inventory.category)
+        self.assertEqual(new_inventory["quantity"], test_inventory.quantity)
