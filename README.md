@@ -64,7 +64,7 @@ tests/                     - test cases package
 
 The inventory resource keeps track of how many of each product we have in our warehouse. At a minimum it will reference a product and the quantity on hand. Inventory also tracks restock levels and the condition of the item (i.e., new, open box, used). Restock levels will help you know when to order more products. Being able to query products by their condition (e.g., new, used) is very useful.
 
-### Database Schema
+## Database Schema
 | Column | Data type | Condition |
 | --- | --- | --- |
 | `id` | `<integer>` | `id > 0` |
@@ -72,12 +72,14 @@ The inventory resource keeps track of how many of each product we have in our wa
 | `inventory_name` | `<string>` | `name = string` |
 | `category` | `<string>` | `category = string` |
 
-### API endpoints
+## API endpoints
 
-| Method | URI | Description | Content-Type | Sample Payload |
+| Method | URI | Description | Content-Type |
 | --- | --- | ------ | --- | ------- |
-| `GET` | `/api/inventory/` | List all items in the inventory | N/A | N/A |
-| `DELETE` | `/api/inventory/<int:id>` | Given the correct `id` this deletes the entry | N/A | N/A |
+| `GET` | `/inventory/` | List all items in the inventory | N/A |
+| `DELETE` | `/inventory/<int:id>` | Given the correct `id` this deletes the entry | N/A |
+| `PUT` | `/inventory/<int:id>` | Given the correct `id` this updates the entry | N/A |
+| `POST` | `/inventory` | Given the inventory parameters, create a new inventory entry | application/json |
 
 ## License
 
