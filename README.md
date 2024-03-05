@@ -77,6 +77,7 @@ The inventory resource keeps track of how many of each product we have in our wa
 | Method | URI | Description | Content-Type |
 | --- | --- | ------ | --- |
 | `GET` | `/inventory/` | List all items in the inventory | N/A |
+| `GET` | `/inventory/<int:id>` | Given the correct `id` this retrieves the inventory | N/A |
 | `DELETE` | `/inventory/<int:id>` | Given the correct `id` this deletes the entry | N/A |
 | `PUT` | `/inventory/<int:id>` | Given the correct `id` this updates the entry | N/A |
 | `POST` | `/inventory` | Given the inventory parameters, create a new inventory entry | application/json |
