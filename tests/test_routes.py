@@ -202,7 +202,6 @@ class TestYourResourceService(TestCase):
         self.assertEqual(new_inventory["inventory_name"], test_inventory.inventory_name)
         self.assertEqual(new_inventory["category"], test_inventory.category)
         self.assertEqual(new_inventory["quantity"], test_inventory.quantity)
-    
 
     def test_get_inventory_not_found(self):
         """It should not Get a Inventory thats not found"""
