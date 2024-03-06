@@ -23,6 +23,7 @@ BASE_URL = "/inventory"
 class TestYourResourceService(TestCase):
     """ REST API Server Tests """
 
+    # pylint: disable=duplicate-code
     @classmethod
     def setUpClass(cls):
         """Run once before all tests"""
@@ -90,6 +91,7 @@ class TestYourResourceService(TestCase):
         data = response.get_json()
         self.assertEqual(data["inventory_name"], test_inventory.inventory_name)
 
+    # pylint: disable=redefined-builtin
     def test_delete_inventory_success(self):
         """ Test deleting an inventory """
         # Create a test inventory item

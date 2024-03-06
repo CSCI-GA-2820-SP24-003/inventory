@@ -22,6 +22,7 @@ DATABASE_URI = os.getenv(
 class TestCaseBase(TestCase):
     """Test Cases for Inventory Model"""
 
+    # pylint: disable=duplicate-code
     @classmethod
     def setUpClass(cls):
         """This runs once before the entire test suite"""
