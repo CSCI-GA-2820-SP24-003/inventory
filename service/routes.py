@@ -94,6 +94,7 @@ def create_inventory():
 ######################################################################
 # READ AN INVENTORY
 ######################################################################
+# pylint: disable=redefined-builtin
 @app.route("/inventory/<int:id>", methods=["GET"])
 def get_inventory(id):
     """
@@ -114,13 +115,14 @@ def get_inventory(id):
 ######################################################################
 # DELETE A INVENTORY
 ######################################################################
+# pylint: disable=redefined-builtin
 @app.route('/inventory/<int:id>', methods=['DELETE'])
 def delete_inventory(id):
     """
     Delete an Inventory.
     This endpoint will delete an Inventory based on the id.
     """
-    app.logger.info("Request to delete inventory with key ({})".format(id))
+    app.logger.info(f"Request to delete inventory with key ({format(id)})")
 
     # Find the inventory by id
     inventory = Inventory.find(id)
@@ -131,7 +133,7 @@ def delete_inventory(id):
     # Delete the inventory
     inventory.delete()
 
-    app.logger.info("Inventory with id {} deleted".format(id))
+    app.logger.info(f"Inventory with id {format(id)} deleted")
 
     # Return a response with 204 No Content status code
     return '', status.HTTP_204_NO_CONTENT
@@ -140,6 +142,7 @@ def delete_inventory(id):
 ######################################################################
 # UPDATE AN EXISTING INVENTORY
 ######################################################################
+# pylint: disable=redefined-builtin
 @app.route("/inventory/<int:id>", methods=["PUT"])
 def update_inventories(id):
     """
