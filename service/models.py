@@ -5,6 +5,7 @@ All of the models are stored in this module
 """
 
 import logging
+from enum import Enum
 from flask_sqlalchemy import SQLAlchemy
 
 logger = logging.getLogger("flask.app")
@@ -15,6 +16,14 @@ db = SQLAlchemy()
 
 class DataValidationError(Exception):
     """Used for an data validation errors when deserializing"""
+
+
+class Condition(Enum):
+    """Enumeration of valid Inventory condition"""
+
+    NEW = 0
+    OPEN = 1
+    USED = 3
 
 
 class Inventory(db.Model):
@@ -29,6 +38,10 @@ class Inventory(db.Model):
     inventory_name = db.Column(db.String(63), nullable=False)
     category = db.Column(db.String(63), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+    condition = db.Column(
+        db.Enum(Condition), nullable=False, server_default=(Condition.NEW.name)
+    )
+    restock_level = db.Column(db.Integer, nullable=False)
 
     ##################################################
     # INSTANCE METHODS
@@ -83,6 +96,8 @@ class Inventory(db.Model):
             "inventory_name": self.inventory_name,
             "category": self.category,
             "quantity": self.quantity,
+            "condition": self.condition.name,
+            "restock_level": self.restock_level,
         }
 
     def deserialize(self, data: dict):
@@ -100,6 +115,14 @@ class Inventory(db.Model):
             else:
                 raise DataValidationError(
                     "Invalid type for int [quantity]: " + str(type(data["quantity"]))
+                )
+            self.condition = getattr(Condition, data["condition"])
+            if isinstance(data["restock_level"], int):
+                self.restock_level = data["restock_level"]
+            else:
+                raise DataValidationError(
+                    "Invalid type for int [restock_level]: "
+                    + str(type(data["restock_level"]))
                 )
         except KeyError as error:
             raise DataValidationError(
@@ -149,3 +172,15 @@ class Inventory(db.Model):
         """Returns all of the Inventories in a quantity"""
         logger.info("Processing quantity query for %s ...", quantity)
         return cls.query.filter(cls.quantity == quantity)
+
+    @classmethod
+    def find_by_condition(cls, condition: Condition = Condition.NEW) -> list:
+        """Returns all of the Inventories in a condition"""
+        logger.info("Processing quantity query for %s ...", condition)
+        return cls.query.filter(cls.condition == condition)
+
+    @classmethod
+    def find_by_restock_level(cls, restock_level: int) -> list:
+        """Returns all of the Inventories in a restock_level"""
+        logger.info("Processing quantity query for %s ...", restock_level)
+        return cls.query.filter(cls.restock_level == restock_level)

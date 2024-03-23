@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from unittest.mock import patch
 from wsgi import app
-from service.models import Inventory, DataValidationError, db
+from service.models import Inventory, Condition, DataValidationError, db
 from tests.factories import InventoryFactory
 
 DATABASE_URI = os.getenv(
@@ -58,14 +58,28 @@ class TestInventoryModel(TestCaseBase):
 
     def test_create_a_inventory(self):
         """It should Create a inventory and assert that it exists"""
-        inventory = Inventory(inventory_name="Apple", category="Fruits", quantity=20)
+        inventory = Inventory(
+            inventory_name="Apple",
+            category="Fruits",
+            quantity=20,
+            condition=Condition.NEW,
+            restock_level=100,
+        )
         self.assertEqual(str(inventory), "<Inventory Apple id=[None]>")
         self.assertTrue(inventory is not None)
         self.assertEqual(inventory.id, None)
         self.assertEqual(inventory.inventory_name, "Apple")
         self.assertEqual(inventory.category, "Fruits")
         self.assertEqual(inventory.quantity, 20)
-        inventory = Inventory(inventory_name="Peach", category="Fruits", quantity=10)
+        self.assertEqual(inventory.condition, Condition.NEW)
+        self.assertEqual(inventory.restock_level, 100)
+        inventory = Inventory(
+            inventory_name="Peach",
+            category="Fruits",
+            quantity=10,
+            condition=Condition.NEW,
+            restock_level=100,
+        )
         self.assertEqual(inventory.inventory_name, "Peach")
         self.assertEqual(inventory.quantity, 10)
 
@@ -73,7 +87,13 @@ class TestInventoryModel(TestCaseBase):
         """It should Create a inventory and add it to the database"""
         inventories = Inventory.all()
         self.assertEqual(inventories, [])
-        inventory = Inventory(inventory_name="Apple", category="Fruits", quantity=20)
+        inventory = Inventory(
+            inventory_name="Apple",
+            category="Fruits",
+            quantity=20,
+            condition=Condition.NEW,
+            restock_level=100,
+        )
         self.assertTrue(inventory is not None)
         self.assertEqual(inventory.id, None)
         inventory.create()
@@ -94,6 +114,8 @@ class TestInventoryModel(TestCaseBase):
         self.assertEqual(found_inventory.id, inventory.id)
         self.assertEqual(found_inventory.inventory_name, inventory.inventory_name)
         self.assertEqual(found_inventory.category, inventory.category)
+        self.assertEqual(found_inventory.condition, inventory.condition)
+        self.assertEqual(found_inventory.restock_level, inventory.restock_level)
 
     def test_update_a_inventory(self):
         """It should Update a Inventory"""
@@ -157,6 +179,10 @@ class TestInventoryModel(TestCaseBase):
         self.assertEqual(data["category"], inventory.category)
         self.assertIn("quantity", data)
         self.assertEqual(data["quantity"], inventory.quantity)
+        self.assertIn("condition", data)
+        self.assertEqual(data["condition"], inventory.condition.name)
+        self.assertIn("restock_level", data)
+        self.assertEqual(data["restock_level"], inventory.restock_level)
 
     def test_deserialize_a_inventory(self):
         """It should de-serialize a Inventory"""
@@ -168,6 +194,8 @@ class TestInventoryModel(TestCaseBase):
         self.assertEqual(inventory.inventory_name, data["inventory_name"])
         self.assertEqual(inventory.category, data["category"])
         self.assertEqual(inventory.quantity, data["quantity"])
+        self.assertEqual(inventory.condition.name, data["condition"])
+        self.assertEqual(inventory.restock_level, data["restock_level"])
 
     def test_deserialize_missing_data(self):
         """It should not deserialize a Inventory with missing data"""
@@ -186,6 +214,14 @@ class TestInventoryModel(TestCaseBase):
         test_inventory = InventoryFactory()
         data = test_inventory.serialize()
         data["quantity"] = "aaa"
+        inventory = Inventory()
+        self.assertRaises(DataValidationError, inventory.deserialize, data)
+
+    def test_deserialize_bad_restock_level(self):
+        """It should not deserialize a bad restock_level attribute"""
+        test_inventory = InventoryFactory()
+        data = test_inventory.serialize()
+        data["restock_level"] = "aaa"
         inventory = Inventory()
         self.assertRaises(DataValidationError, inventory.deserialize, data)
 
@@ -281,3 +317,35 @@ class TestModelQueries(TestCaseBase):
         self.assertEqual(found.count(), count)
         for inventory in found:
             self.assertEqual(inventory.quantity, quantity)
+
+    def test_find_by_condition(self):
+        """It should Find Inventories by Condition"""
+        inventories = InventoryFactory.create_batch(10)
+        for inventory in inventories:
+            inventory.create()
+        condition = inventories[0].condition
+        count = len(
+            [inventory for inventory in inventories if inventory.condition == condition]
+        )
+        found = Inventory.find_by_condition(condition)
+        self.assertEqual(found.count(), count)
+        for inventory in found:
+            self.assertEqual(inventory.condition, condition)
+
+    def test_find_by_restock_level(self):
+        """It should Find a Inventories by Restock_level"""
+        inventories = InventoryFactory.create_batch(10)
+        for inventory in inventories:
+            inventory.create()
+        restock_level = inventories[0].restock_level
+        count = len(
+            [
+                inventory
+                for inventory in inventories
+                if inventory.restock_level == restock_level
+            ]
+        )
+        found = Inventory.find_by_restock_level(restock_level)
+        self.assertEqual(found.count(), count)
+        for inventory in found:
+            self.assertEqual(inventory.restock_level, restock_level)
