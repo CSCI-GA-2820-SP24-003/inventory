@@ -18,7 +18,7 @@ Test Factory to make fake objects for testing
 
 import factory
 from factory.fuzzy import FuzzyChoice
-from service.models import Inventory
+from service.models import Inventory, Condition
 
 
 class InventoryFactory(factory.Factory):
@@ -33,3 +33,5 @@ class InventoryFactory(factory.Factory):
     inventory_name = FuzzyChoice(choices=["Apple", "Iphone", "telephone"])
     category = FuzzyChoice(choices=["Fruits", "Electronic"])
     quantity = FuzzyChoice(choices=[20, 30, 40])
+    condition = FuzzyChoice(choices=[Condition.NEW, Condition.OPEN, Condition.USED])
+    restock_level = FuzzyChoice(choices=[100, 110, 120])
