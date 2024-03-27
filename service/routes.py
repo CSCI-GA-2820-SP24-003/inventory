@@ -43,6 +43,7 @@ def index():
 #  R E S T   A P I   E N D P O I N T S
 ######################################################################
 
+
 ######################################################################
 # LIST ALL ITEMS
 ######################################################################
@@ -56,10 +57,18 @@ def list_inventory():
     # See if any query filters were passed in
     category = request.args.get("category")
     name = request.args.get("name")
+    condition = request.args.get("condition")
+    restock_level = request.args.get("restock_level")
+    if restock_level:
+        restock_level_num = int(restock_level)
     if category:
         inventory = Inventory.find_by_category(category)
     elif name:
         inventory = Inventory.find_by_inventory_name(name)
+    elif condition:
+        inventory = Inventory.find_by_condition(condition)
+    elif restock_level:
+        inventory = Inventory.find_by_restock_level(restock_level_num)
     else:
         inventory = Inventory.all()
 
@@ -116,7 +125,7 @@ def get_inventory(id):
 # DELETE A INVENTORY
 ######################################################################
 # pylint: disable=redefined-builtin
-@app.route('/inventory/<int:id>', methods=['DELETE'])
+@app.route("/inventory/<int:id>", methods=["DELETE"])
 def delete_inventory(id):
     """
     Delete an Inventory.
@@ -128,7 +137,7 @@ def delete_inventory(id):
     inventory = Inventory.find(id)
 
     if inventory is None:
-        return '', status.HTTP_204_NO_CONTENT
+        return "", status.HTTP_204_NO_CONTENT
 
     # Delete the inventory
     inventory.delete()
@@ -136,7 +145,7 @@ def delete_inventory(id):
     app.logger.info(f"Inventory with id {format(id)} deleted")
 
     # Return a response with 204 No Content status code
-    return '', status.HTTP_204_NO_CONTENT
+    return "", status.HTTP_204_NO_CONTENT
 
 
 ######################################################################
@@ -163,6 +172,37 @@ def update_inventories(id):
 
     app.logger.info("Inventory with ID: %d updated.", inventory.id)
     return jsonify(inventory.serialize()), status.HTTP_200_OK
+
+
+######################################################################
+# RESTOCK
+######################################################################
+@app.route("/inventory/<int:id>/restock", methods=["PUT"])
+def restock(id):
+    """
+    Restock
+
+    This endpoint will restock and change the quantity
+    """
+    app.logger.info("Request to request with id: %d", id)
+
+    quantity = request.args.get("quantity")
+    if not quantity:
+        quantity = 1
+    inventory = Inventory.find(id)
+    if not inventory:
+        error(status.HTTP_404_NOT_FOUND, f"Inventory with id '{id}' was not found.")
+    resultquantity = inventory.quantity + int(quantity)
+    if resultquantity > inventory.restock_level:
+        error(
+            status.HTTP_409_CONFLICT,
+            f"Inventory with ID: '{id}' quantity exceeds restock_level.",
+        )
+    inventory.quantity = resultquantity
+    inventory.update()
+
+    app.logger.info("Inventory with ID: %d has been restocked.", id)
+    return inventory.serialize(), status.HTTP_200_OK
 
 
 ######################################################################
