@@ -7,7 +7,7 @@ import logging
 from unittest import TestCase
 from wsgi import app
 from service.common import status
-from service.models import db, Inventory
+from service.models import Condition, db, Inventory
 from .factories import InventoryFactory
 
 DATABASE_URI = os.getenv(
@@ -199,6 +199,41 @@ class TestYourResourceService(TestCase):
         self.assertEqual(len(data), 2)
         for item in data:
             self.assertEqual(item["restock_level"], 100)
+
+    def test_list_inventory_with_condition_filter(self):
+        """Test listing inventory with condition filter"""
+        test_inventory_1 = InventoryFactory(condition=Condition.NEW)
+        test_inventory_2 = InventoryFactory(condition=Condition.NEW)
+        test_inventory_3 = InventoryFactory(condition=Condition.USED)
+        self.client.post("/inventory", json=test_inventory_1.serialize())
+        self.client.post("/inventory", json=test_inventory_2.serialize())
+        self.client.post("/inventory", json=test_inventory_3.serialize())
+
+        response = self.client.get("/inventory?condition=NEW")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        for item in data:
+            self.assertEqual(item["condition"], "NEW")
+
+    def test_list_inventory_with_quantity_filter(self):
+        """Test listing inventory with quantity filter"""
+        test_inventory_1 = InventoryFactory(quantity=100)
+        test_inventory_2 = InventoryFactory(quantity=100)
+        test_inventory_3 = InventoryFactory(quantity=120)
+
+        self.client.post("/inventory", json=test_inventory_1.serialize())
+        self.client.post("/inventory", json=test_inventory_2.serialize())
+        self.client.post("/inventory", json=test_inventory_3.serialize())
+
+        response = self.client.get("/inventory?quantity=100")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        for item in data:
+            self.assertEqual(item["quantity"], 100)
 
     def test_create_inventory(self):
         """It should Create a new Inventory"""
