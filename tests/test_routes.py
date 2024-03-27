@@ -1,6 +1,7 @@
 """
 TestYourResourceModel API Service Test Suite
 """
+
 import os
 import logging
 from unittest import TestCase
@@ -21,7 +22,7 @@ BASE_URL = "/inventory"
 ######################################################################
 # pylint: disable=too-many-public-methods
 class TestYourResourceService(TestCase):
-    """ REST API Server Tests """
+    """REST API Server Tests"""
 
     # pylint: disable=duplicate-code
     @classmethod
@@ -46,7 +47,7 @@ class TestYourResourceService(TestCase):
         db.session.commit()
 
     def tearDown(self):
-        """ This runs after each test """
+        """This runs after each test"""
         db.session.remove()
 
     def _create_items(self, count):
@@ -70,7 +71,7 @@ class TestYourResourceService(TestCase):
     ######################################################################
 
     def test_index(self):
-        """ It should call the home page """
+        """It should call the home page"""
         resp = self.client.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
@@ -93,7 +94,7 @@ class TestYourResourceService(TestCase):
 
     # pylint: disable=redefined-builtin
     def test_delete_inventory_success(self):
-        """ Test deleting an inventory """
+        """Test deleting an inventory"""
         # Create a test inventory item
         test_inventory = InventoryFactory()
         response = self.client.post(BASE_URL, json=test_inventory.serialize())
@@ -107,7 +108,7 @@ class TestYourResourceService(TestCase):
         self.assertIsNone(deleted_inventory)
 
     def test_delete_non_existent_inventory(self):
-        """ Test deleting a non-existent inventory """
+        """Test deleting a non-existent inventory"""
         # Make a DELETE request to delete an inventory item with a non-existent ID
         non_existent_inventory_id = 99999
         resp = self.client.delete(f"/inventory/{non_existent_inventory_id}")
@@ -125,19 +126,21 @@ class TestYourResourceService(TestCase):
         new_inventory = response.get_json()
         logging.debug(new_inventory)
         new_inventory["category"] = "unknown"
-        response = self.client.put(f"{BASE_URL}/{new_inventory['id']}", json=new_inventory)
+        response = self.client.put(
+            f"{BASE_URL}/{new_inventory['id']}", json=new_inventory
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_inventory = response.get_json()
         self.assertEqual(updated_inventory["category"], "unknown")
 
     def test_update_non_existent_inventory(self):
-        """ Test updating a non-existent inventory """
+        """Test updating a non-existent inventory"""
         # Make a PUT request to update an inventory item with a non-existent ID
         non_existent_inventory_id = 99999
         updated_inventory = {
             "inventory_name": "Updated Name",
             "category": "Updated Category",
-            "quantity": 100
+            "quantity": 100,
         }
         resp = self.client.put(
             f"/inventory/{non_existent_inventory_id}", json=updated_inventory
@@ -179,6 +182,24 @@ class TestYourResourceService(TestCase):
         for item in data:
             self.assertEqual(item["inventory_name"], "Item1")
 
+    def test_list_inventory_with_restock_level_filter(self):
+        """Test listing inventory with restock_level filter"""
+        test_inventory_1 = InventoryFactory(restock_level=100)
+        test_inventory_2 = InventoryFactory(restock_level=100)
+        test_inventory_3 = InventoryFactory(restock_level=120)
+
+        self.client.post("/inventory", json=test_inventory_1.serialize())
+        self.client.post("/inventory", json=test_inventory_2.serialize())
+        self.client.post("/inventory", json=test_inventory_3.serialize())
+
+        response = self.client.get("/inventory?restock_level=100")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.get_json()
+        self.assertEqual(len(data), 2)
+        for item in data:
+            self.assertEqual(item["restock_level"], 100)
+
     def test_create_inventory(self):
         """It should Create a new Inventory"""
         test_inventory = InventoryFactory()
@@ -211,6 +232,43 @@ class TestYourResourceService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
+
+    ######################################################################
+    #  T E S T   A C T I O N S
+    ######################################################################
+
+    def test_restock_default_amount(self):
+        """It should Restock"""
+        inventories = self._create_items(10)
+        inventory = inventories[0]
+        quantity = inventory.quantity
+        response = self.client.put(f"{BASE_URL}/{inventory.id}/restock")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(f"{BASE_URL}/{inventory.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        logging.debug("Response data: %s", data)
+        self.assertEqual(data["quantity"], quantity + 1)
+
+    def test_restock_certain_amount(self):
+        """It should Restock in certain number"""
+        inventories = self._create_items(10)
+        inventory = inventories[0]
+        quantity = inventory.quantity
+        response = self.client.put(f"{BASE_URL}/{inventory.id}/restock?quantity=20")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(f"{BASE_URL}/{inventory.id}")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        logging.debug("Response data: %s", data)
+        self.assertEqual(data["quantity"], quantity + 20)
+
+    def test_restock_exceeds_restock_level(self):
+        """It should not restock"""
+        inventories = self._create_items(10)
+        inventory = inventories[0]
+        response = self.client.put(f"{BASE_URL}/{inventory.id}/restock?quantity=3000")
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
     ######################################################################
     #  T E S T   S A D   P A T H S
