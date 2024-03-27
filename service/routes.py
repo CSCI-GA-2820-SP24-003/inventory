@@ -59,8 +59,11 @@ def list_inventory():
     name = request.args.get("name")
     condition = request.args.get("condition")
     restock_level = request.args.get("restock_level")
+    quantity = request.args.get("quantity")
     if restock_level:
         restock_level_num = int(restock_level)
+    if quantity:
+        quantity_num = int(quantity)
     if category:
         inventory = Inventory.find_by_category(category)
     elif name:
@@ -69,6 +72,10 @@ def list_inventory():
         inventory = Inventory.find_by_condition(condition)
     elif restock_level:
         inventory = Inventory.find_by_restock_level(restock_level_num)
+    elif quantity:
+        inventory = Inventory.find_by_quantity(quantity_num)
+    elif condition:
+        inventory = Inventory.find_by_condition(condition)
     else:
         inventory = Inventory.all()
 
