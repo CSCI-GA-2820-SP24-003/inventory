@@ -32,18 +32,18 @@ jobs:
           --health-retries 5
     
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    
-    # commands for following steps also present in Makefile
-    - name: Install dependencies
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      # commands for following steps also present in Makefile
+      - name: Install dependencies
         run: |
           python -m pip install poetry
           poetry config virtualenvs.create false
           poetry lock --no-update
           poetry install
-    
-    - name: Linting
+      
+      - name: Linting
         run: |
           # stop the build if there are Python syntax errors or undefined names
           flake8 service tests --count --select=E9,F63,F7,F82 --show-source --statistics
@@ -51,11 +51,11 @@ jobs:
           flake8 service tests --count --max-complexity=10 --max-line-length=127 --statistics
           # Run pylint to catch other PEP8 errors
           pylint service tests --max-line-length=127
-    
-    - name: Run unit tests with PyTest
+      
+      - name: Run unit tests with PyTest
         run: pytest --pspec --cov=service --cov-fail-under=95
         env:
           DATABASE_URI: "postgresql://postgres:pgs3cr3t@postgres:5432/testdb"
 
-    # - name: Upload code coverage
-    #   uses: codecov/codecov-action@v3.1.4
+      # - name: Upload code coverage
+      #   uses: codecov/codecov-action@v3.1.4
