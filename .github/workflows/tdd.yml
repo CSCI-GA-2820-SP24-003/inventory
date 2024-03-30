@@ -1,4 +1,4 @@
-name: CI build
+name: TDD CI build
 
 on:
   push:
