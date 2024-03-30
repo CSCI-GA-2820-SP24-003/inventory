@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - ci # delete this after ci branch is merged
   pull_request:
     branches:
       - master
