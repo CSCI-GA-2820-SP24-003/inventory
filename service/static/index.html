@@ -27,9 +27,9 @@
         <div class="well">
           <div class="form-horizontal">
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_id">Pet ID:</label>
+              <label class="control-label col-sm-2" for="inventory_id">Inventory ID:</label>
               <div class="col-sm-6">
-                <input type="text" class="form-control" id="pet_id" placeholder="Enter ID of Pet">
+                <input type="text" class="form-control" id="inventory_id" placeholder="Enter ID of Inventory">
               </div>
               <div class="col-sm-4">
                 <button type="submit" class="btn btn-primary" id="retrieve-btn">Retrieve</button>
@@ -42,48 +42,53 @@
 
             <!-- NAME -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_name">Name:</label>
+              <label class="control-label col-sm-2" for="inventory_name">Name:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="pet_name" placeholder="Enter name for Pet">
+                <input type="text" class="form-control" id="inventory_name" placeholder="Enter name for Inventory">
               </div>
             </div>
 
             <!-- CATEGORY -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_category">Category:</label>
+              <label class="control-label col-sm-2" for="inventory_category">Category:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="pet_category" placeholder="Enter category for Pet">
+                <input type="text" class="form-control" id="inventory_category" placeholder="Enter category for Inventory">
               </div>
             </div>
 
-            <!-- AVAILABLE -->
+            <!-- QUANTITY -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_available">Available:</label>
+              <label class="control-label col-sm-2" for="inventory_quantity">Quantity:</label>
               <div class="col-sm-10">
-                <select class="form-control" id="pet_available">
-                  <option value="true" selected>True</option>
-                  <option value="false">False</option>
+                <input type="text" class="form-control" id="inventory_quantity" placeholder="Enter quantity for Inventory">
+              </div>
+            </div>
+
+            <!-- RESTOCK_QUANTITY -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="inventory_restock_quantity">Restock_Quantity:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="inventory_restock_quantity" placeholder="Enter quantity for Restock">
+              </div>
+            </div>
+
+            <!-- CONDITION -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="inventory_condition">Condition:</label>
+              <div class="col-sm-10">
+                <select class="form-control" id="inventory_condition">
+                  <option value="NEW" selected>New</option>
+                  <option value="OPEN">Open</option>
+                  <option value="USED">Used</option>
                 </select>
               </div>
             </div>
 
-            <!-- GENDER -->
+            <!-- RESTOCK_LEVEL -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_gender">Gender:</label>
+              <label class="control-label col-sm-2" for="inventory_restock_level">Restock_level:</label>
               <div class="col-sm-10">
-                <select class="form-control" id="pet_gender">
-                  <option value="UNKNOWN" selected>Unknown</option>
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- BIRTHDAY -->
-            <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_birthday">Birthday:</label>
-              <div class="col-sm-10">
-                <input type="date" class="form-control" id="pet_birthday" placeholder="2020-04-01">
+                <input type="text" class="form-control" id="inventory_restock_level" placeholder="Enter restock_level for Inventory">
               </div>
             </div>
 
@@ -95,6 +100,7 @@
                 <button type="submit" class="btn btn-primary" id="clear-btn">Clear</button>
                 <button type="submit" class="btn btn-success" id="create-btn">Create</button>
                 <button type="submit" class="btn btn-warning" id="update-btn">Update</button>
+                <button type="submit" class="btn btn-warning" id="restock-btn">Restock</button>
               </div>
             </div>
           </div> <!-- form horizontal -->
@@ -109,9 +115,9 @@
             <th class="col-md-1">ID</th>
             <th class="col-md-4">Name</th>
             <th class="col-md-4">Category</th>
-            <th class="col-md-3">Available</th>
-            <th class="col-md-3">Gender</th>
-            <th class="col-md-3">Birthday</th>
+            <th class="col-md-3">Quantity</th>
+            <th class="col-md-3">Condition</th>
+            <th class="col-md-3">Restock_level</th>
           </tr>
           </thead>
         </table>
