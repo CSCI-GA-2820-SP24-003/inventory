@@ -61,18 +61,16 @@ def list_inventory():
         restock_level_num = int(restock_level)
     if quantity:
         quantity_num = int(quantity)
-    if category:
-        inventory = Inventory.find_by_category(category)
-    elif name:
+    if name:
         inventory = Inventory.find_by_inventory_name(name)
-    elif condition:
-        inventory = Inventory.find_by_condition(condition)
-    elif restock_level:
-        inventory = Inventory.find_by_restock_level(restock_level_num)
+    elif category:
+        inventory = Inventory.find_by_category(category)
     elif quantity:
         inventory = Inventory.find_by_quantity(quantity_num)
     elif condition:
         inventory = Inventory.find_by_condition(condition)
+    elif restock_level:
+        inventory = Inventory.find_by_restock_level(restock_level_num)
     else:
         inventory = Inventory.all()
 
