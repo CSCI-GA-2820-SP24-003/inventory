@@ -14,7 +14,7 @@ DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
 
-BASE_URL = "/inventory"
+BASE_URL = "/api/inventory"
 
 
 ######################################################################

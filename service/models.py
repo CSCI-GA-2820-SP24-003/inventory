@@ -184,3 +184,9 @@ class Inventory(db.Model):
         """Returns all of the Inventories in a restock_level"""
         logger.info("Processing quantity query for %s ...", restock_level)
         return cls.query.filter(cls.restock_level == restock_level)
+    
+    @classmethod
+    def remove_all(cls):
+        """Removes all documents from the database (use for testing)"""
+        for document in cls.database:  # pylint: disable=(not-an-iterable
+            document.delete()
