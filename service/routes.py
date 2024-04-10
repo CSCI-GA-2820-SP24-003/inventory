@@ -32,7 +32,7 @@ from service.common import status  # HTTP Status Codes
 ######################################################################
 @app.route("/health")
 def health_check():
-    """Return the health status of the service."""
+    """Return the health status of the service"""
     return jsonify(status=200, message="Healthy"), status.HTTP_200_OK
 
 
