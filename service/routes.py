@@ -93,7 +93,8 @@ item_args.add_argument(
     "quantity", type=int, location="args", required=False, help="List items by quantity",
 )
 item_args.add_argument(
-    "condition", type=str, location="args", required=False, help="List items by condition",
+    "condition", type=str, choices=('NEW', 'OPENED', 'USED'),
+    location="args", required=False, help="List items by condition",
 )
 item_args.add_argument(
     "restock_level", type=int, location="args", required=False, help="List items by restock_level",
@@ -225,9 +226,9 @@ class InventoryCollection(Resource):
         else:
             app.logger.info("Returning unfiltered list.")
             inventory = Inventory.all()
-
-        app.logger.info("Returning %d items", len(inventory))
+        
         results = [item.serialize() for item in inventory]
+        app.logger.info("Returning %d items", len(results))
         return results, status.HTTP_200_OK
 
     # ------------------------------------------------------------------

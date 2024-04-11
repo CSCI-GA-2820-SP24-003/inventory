@@ -135,6 +135,10 @@ class Inventory(db.Model):
                 "Invalid Inventory: body of request contained bad or no data "
                 + str(error)
             ) from error
+        except AttributeError as error:
+            raise DataValidationError(
+                "Invalid Condition Word. Expect: NEW, OPENED, USED; Got: " + str(error)
+            )
         return self
 
     ##################################################
