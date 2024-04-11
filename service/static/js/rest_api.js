@@ -1,5 +1,7 @@
 $(function () {
 
+    let root = "/api/inventory";
+
     // ****************************************
     //  U T I L I T Y   F U N C T I O N S
     // ****************************************
@@ -53,7 +55,7 @@ $(function () {
         
         let ajax = $.ajax({
             type: "POST",
-            url: "/inventory",
+            url: "${root}",
             contentType: "application/json",
             data: JSON.stringify(data),
         });
@@ -94,7 +96,7 @@ $(function () {
 
         let ajax = $.ajax({
                 type: "PUT",
-                url: `/inventory/${inventory_id}`,
+                url: `${root}/${inventory_id}`,
                 contentType: "application/json",
                 data: JSON.stringify(data)
             })
@@ -122,7 +124,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/inventory/${inventory_id}`,
+            url: `${root}/${inventory_id}`,
             contentType: "application/json",
             data: ''
         })
@@ -152,7 +154,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "DELETE",
-            url: `/inventory/${inventory_id}`,
+            url: `${root}/${inventory_id}`,
             contentType: "application/json",
             data: '',
         })
@@ -184,18 +186,12 @@ $(function () {
     $("#restock-btn").click(function () {
 
         let inventory_id = $("#inventory_id").val();
-        let quantity = $("#inventory_restock_quantity").val();
-        let queryString = ""
-
-        if(quantity){
-            queryString += 'quantity=' + quantity
-        }
 
         $("#flash_message").empty();
 
         let ajax = $.ajax({
             type: "PUT",
-            url: `/inventory/${inventory_id}/restock?${queryString}`,
+            url: `${root}/${inventory_id}/restock`,
             contentType: "application/json",
             data: ''
         })
@@ -265,7 +261,7 @@ $(function () {
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/inventory?${queryString}`,
+            url: `${root}?${queryString}`,
             contentType: "application/json",
             data: ''
         })
