@@ -16,10 +16,9 @@
 """
 Module: error_handlers
 """
-from wsgi import app, api
-
 # from flask import jsonify
-# from flask import current_app as app  # Import Flask application
+from service import api
+from flask import current_app as app  # Import Flask application
 from service.models import DataValidationError, DatabaseConnectionError
 from . import status
 

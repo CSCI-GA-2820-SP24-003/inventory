@@ -22,12 +22,11 @@ and Delete Items from the inventory of Items in the InventoryShop
 """
 
 from flask import jsonify, abort
-
-# from flask import current_app as app  # Import Flask application
+from flask import current_app as app  # Import Flask application
 from flask_restx import Resource, fields, reqparse
 from service.models import Inventory, Condition
 from service.common import status  # HTTP Status Codes
-from wsgi import app, api
+from . import api
 
 
 ######################################################################

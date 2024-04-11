@@ -28,7 +28,7 @@ from service.common import log_handlers
 ############################################################
 # Initialize the Flask instance
 ############################################################
-def create_api():
+def create_app():
     """Initialize the core application."""
     # Create Flask application
     app = Flask(__name__)
@@ -43,6 +43,7 @@ def create_api():
     db.init_app(app)
 
     # Configure Swagger before initializing it
+    global api
     api = Api(
         app,
         version="1.0.0",
@@ -77,4 +78,4 @@ def create_api():
 
         app.logger.info("Service initialized!")
 
-        return api
+        return app
