@@ -291,22 +291,23 @@ class RestockResource(Resource):
 
         This endpoint will restock an item and change the quantity
         """
-        app.logger.info("Request to restock with id: %d", id)
+        app.logger.info("Request to restock with id: %s", id)
         item = Inventory.find(id)
         if not item:
             error(status.HTTP_404_NOT_FOUND, f"Item with id '{id}' was not found.")
-
-        entered_quantity = int(api.payload["quantity"])
-        # args = item_args.parse_args()
-        # entered_quantity = args["quantity"]
-        new_quantity = item.quantity + int(entered_quantity)
-        if new_quantity < item.restock_level:
+        
+        if item.quantity > item.restock_level: 
             error(
                 status.HTTP_400_BAD_REQUEST,
-                f"New quantity [{new_quantity}] still below restock level [{item.restock_level}]",
+                f'No need to restock: '
+                f'quantity [{item.quantity}] greater than '
+                f'restock level [{item.restock_level}]',
             )
-
-        item.quantity = new_quantity
+        
+        # add the number of items sold to restock_level
+        # the more we sold, the more we add, vice versa
+        # (may use more sophisticated rule)
+        item.quantity = 2*item.restock_level-item.quantity
         item.update()
         app.logger.info("Item %s restocked.", item.inventory_name)
         return item.serialize(), status.HTTP_200_OK
