@@ -16,7 +16,8 @@
 """
 Module: error_handlers
 """
-from service import app, api
+from wsgi import app, api
+
 # from flask import jsonify
 # from flask import current_app as app  # Import Flask application
 from service.models import DataValidationError, DatabaseConnectionError
@@ -37,6 +38,7 @@ def request_validation_error(error):
         "message": message,
     }, status.HTTP_400_BAD_REQUEST
 
+
 @api.errorhandler(DatabaseConnectionError)
 def database_connection_error(error):
     """Handles Database Errors from connection attempts"""
@@ -47,6 +49,7 @@ def database_connection_error(error):
         "error": "Service Unavailable",
         "message": message,
     }, status.HTTP_503_SERVICE_UNAVAILABLE
+
 
 # @app.errorhandler(status.HTTP_404_NOT_FOUND)
 # def not_found(error):

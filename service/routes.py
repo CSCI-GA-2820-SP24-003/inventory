@@ -22,11 +22,12 @@ and Delete Items from the inventory of Items in the InventoryShop
 """
 
 from flask import jsonify, abort
-from flask import current_app as app  # Import Flask application
+
+# from flask import current_app as app  # Import Flask application
 from flask_restx import Resource, fields, reqparse
 from service.models import Inventory, Condition
 from service.common import status  # HTTP Status Codes
-from . import app, api
+from wsgi import app, api
 
 
 ######################################################################
@@ -51,7 +52,9 @@ def index():
 inventory_item = api.model(
     "InventoryItem",
     {
-        "inventory_name": fields.String(required=True, description="The name of an item"),
+        "inventory_name": fields.String(
+            required=True, description="The name of an item"
+        ),
         "category": fields.String(
             required=True,
             description="The category of an item",
@@ -82,12 +85,14 @@ item_model = api.inherit(
 # Tell RESTX how to handle query string arguments
 item_args = reqparse.RequestParser()
 item_args.add_argument(
-    "quantity", type=int, location="args", required=False,
-    help="List items by quantity"
+    "quantity", type=int, location="args", required=False, help="List items by quantity"
 )
 item_args.add_argument(
-    "condition", type=str, location="args", required=False,
-    help="List items by condition"
+    "condition",
+    type=str,
+    location="args",
+    required=False,
+    help="List items by condition",
 )
 
 
@@ -102,7 +107,6 @@ item_args.add_argument(
 @api.route("/inventory/<id>")
 @api.param("id", "The inventory identifier")
 class InventoryResource(Resource):
-
     """
     InventoryResource class
 
@@ -127,11 +131,10 @@ class InventoryResource(Resource):
         app.logger.info("Request for item with id: %s", id)
         item = Inventory.find(id)
         if not item:
-            error(status.HTTP_404_NOT_FOUND,
-                  f"Item with id '{id}' was not found.")
+            error(status.HTTP_404_NOT_FOUND, f"Item with id '{id}' was not found.")
         app.logger.info("Returning item: %s", item.inventory_name)
         return item.serialize(), status.HTTP_200_OK
-    
+
     # ------------------------------------------------------------------
     # UPDATE AN EXISTING PET
     # ------------------------------------------------------------------
@@ -149,8 +152,7 @@ class InventoryResource(Resource):
         app.logger.info("Request to update item with id [%s]", id)
         item = Inventory.find(id)
         if not item:
-            error(status.HTTP_404_NOT_FOUND,
-                  f"Item with id: '{id}' was not found.")
+            error(status.HTTP_404_NOT_FOUND, f"Item with id: '{id}' was not found.")
         data = api.payload
         app.logger.debug("Payload = %s", data)
         item.deserialize(data)
@@ -158,7 +160,7 @@ class InventoryResource(Resource):
         item.update()
         app.logger.info("Item %s updated.", item.inventory_name)
         return item.serialize(), status.HTTP_200_OK
-    
+
     # ------------------------------------------------------------------
     # DELETE AN ITEM
     # ------------------------------------------------------------------
@@ -201,7 +203,7 @@ class InventoryCollection(Resource):
         quantity = args["quantity"]
         condition = args["condition"]
         restock_level = args["restock_level"]
-        
+
         if name:
             app.logger.info("Filtering by name: %s", name)
             inventory = Inventory.find_by_inventory_name(name)
@@ -215,17 +217,16 @@ class InventoryCollection(Resource):
             app.logger.info("Filtering by condition: %s", condition)
             inventory = Inventory.find_by_condition(condition)
         elif restock_level:
-            app.logger.info("Filtering by restock_level: %s",
-                            int(restock_level))
+            app.logger.info("Filtering by restock_level: %s", int(restock_level))
             inventory = Inventory.find_by_restock_level(int(restock_level))
         else:
             app.logger.info("Returning unfiltered list.")
             inventory = Inventory.all()
-        
+
         app.logger.info("Returning %d items", len(inventory))
         results = [item.serialize() for item in inventory]
         return results, status.HTTP_200_OK
-    
+
     # ------------------------------------------------------------------
     # ADD A NEW ITEM
     # ------------------------------------------------------------------
@@ -245,10 +246,8 @@ class InventoryCollection(Resource):
         item.deserialize(api.payload)
         item.create()
         app.logger.info("Item %s created.", item.inventory_name)
-        location_url = api.url_for(InventoryResource,
-                                   id=item.id, _external=True)
+        location_url = api.url_for(InventoryResource, id=item.id, _external=True)
         return item.serialize(), status.HTTP_201_CREATED, {"Location": location_url}
-
 
     # ------------------------------------------------------------------
     # DELETE ALL PETS (for testing only)
@@ -270,6 +269,7 @@ class InventoryCollection(Resource):
 
         return "", status.HTTP_204_NO_CONTENT
 
+
 ######################################################################
 #  PATH: /inventory/{id}/restock
 ######################################################################
@@ -277,6 +277,7 @@ class InventoryCollection(Resource):
 @api.param("id", "The Inventory identifier")
 class RestockResource(Resource):
     """Restock actions on an item"""
+
     @api.doc("restock_item")
     @api.response(404, "Item not found")
     @api.response(400, "Bad quantity: quantity not enough for restock")
@@ -289,9 +290,8 @@ class RestockResource(Resource):
         app.logger.info("Request to restock with id: %d", id)
         item = Inventory.find(id)
         if not item:
-            error(status.HTTP_404_NOT_FOUND,
-                  f"Item with id '{id}' was not found.")
-        
+            error(status.HTTP_404_NOT_FOUND, f"Item with id '{id}' was not found.")
+
         entered_quantity = int(api.payload["quantity"])
         # args = item_args.parse_args()
         # entered_quantity = args["quantity"]
@@ -301,7 +301,7 @@ class RestockResource(Resource):
                 status.HTTP_400_BAD_REQUEST,
                 f"New quantity [{new_quantity}] still below restock level [{item.restock_level}]",
             )
-        
+
         item.quantity = new_quantity
         item.update()
         app.logger.info("Item %s restocked.", item.inventory_name)
@@ -317,7 +317,7 @@ def error(status_code, reason):
     abort(status_code, reason)
 
 
-# Below code no longer needed because reqparse does checks for us 
+# Below code no longer needed because reqparse does checks for us
 # ######################################################################
 # # Checks the ContentType of a request
 # ######################################################################

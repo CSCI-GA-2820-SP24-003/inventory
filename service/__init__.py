@@ -28,7 +28,7 @@ from service.common import log_handlers
 ############################################################
 # Initialize the Flask instance
 ############################################################
-def create_app():
+def create_api():
     """Initialize the core application."""
     # Create Flask application
     app = Flask(__name__)
@@ -39,6 +39,7 @@ def create_app():
     # Initialize Plugins
     # pylint: disable=import-outside-toplevel
     from service.models import db
+
     db.init_app(app)
 
     # Configure Swagger before initializing it
@@ -76,4 +77,4 @@ def create_app():
 
         app.logger.info("Service initialized!")
 
-        return app
+        return api
