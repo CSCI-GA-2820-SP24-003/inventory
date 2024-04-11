@@ -24,7 +24,7 @@ class Condition(Enum):
     """Enumeration of valid Inventory condition"""
 
     NEW = 0
-    OPEN = 1
+    OPENED = 1
     USED = 3
 
 

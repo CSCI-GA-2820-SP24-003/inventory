@@ -9,7 +9,7 @@ Feature: The inventory service back-end
         | iphone     | electronics  | 20        | NEW        | 100            |
         | apple      | fruit        | 30        | NEW        | 110            |
         | ipad       | electronics  | 40        | USED       | 120            |
-        | peach      | fruit        | 50        | OPEN       | 130            |
+        | peach      | fruit        | 50        | OPENED       | 130            |
 
 Scenario: The server is running
     When I visit the "Home Page"
