@@ -24,6 +24,8 @@ from flask_restx import Api
 from service import config
 from service.common import log_handlers
 
+# Will be initialize when app is created
+api = None  # pylint: disable=invalid-name
 
 ############################################################
 # Initialize the Flask instance
