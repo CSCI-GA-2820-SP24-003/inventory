@@ -75,7 +75,7 @@ item_model = api.inherit(
     "ItemModel",
     inventory_item,
     {
-        "_id": fields.String(
+        "id": fields.Integer(  # "_id": fields.String won't work
             readOnly=True, description="The unique id assigned internally by service"
         ),
     },
@@ -84,16 +84,20 @@ item_model = api.inherit(
 # Tell RESTX how to handle query string arguments
 item_args = reqparse.RequestParser()
 item_args.add_argument(
-    "quantity", type=int, location="args", required=False, help="List items by quantity"
+    "name", type=str, location="args", required=False, help="List items by name"
 )
 item_args.add_argument(
-    "condition",
-    type=str,
-    location="args",
-    required=False,
-    help="List items by condition",
+    "category", type=str, location="args", required=False, help="List items by category",
 )
-
+item_args.add_argument(
+    "quantity", type=int, location="args", required=False, help="List items by quantity",
+)
+item_args.add_argument(
+    "condition", type=str, location="args", required=False, help="List items by condition",
+)
+item_args.add_argument(
+    "restock_level", type=int, location="args", required=False, help="List items by restock_level",
+)
 
 ######################################################################
 #  R E S T   A P I   E N D P O I N T S
