@@ -268,7 +268,7 @@ class TestYourResourceService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
-    
+
     def test_delete_all_items_while_not_under_test(self):
         """It should Delete All Items under test only"""
         self._create_items(1)

@@ -1,4 +1,4 @@
-name: BDD Tests
+name: BDD CI Build
 on:
   push:
     branches:
