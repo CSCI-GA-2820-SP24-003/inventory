@@ -20,7 +20,7 @@ Inventory Store Service
 This service implements a REST API that allows you to Create, Read, Update
 and Delete Items from the inventory of Items in the InventoryShop
 """
-
+# pylint: disable=redefined-builtin, cyclic-import
 from flask import jsonify, abort
 from flask import current_app as app  # Import Flask application
 from flask_restx import Resource, fields, reqparse

@@ -140,7 +140,7 @@ class Inventory(db.Model):
         except AttributeError as error:
             raise DataValidationError(
                 "Invalid Condition Word. Expect: NEW, OPENED, USED; Got: " + str(error)
-            )
+            ) from error
         return self
 
     ##################################################

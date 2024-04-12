@@ -1,7 +1,6 @@
 """
 TestYourResourceModel API Service Test Suite
 """
-
 import os
 import logging
 from unittest import TestCase
