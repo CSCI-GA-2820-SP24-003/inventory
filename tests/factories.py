@@ -32,6 +32,6 @@ class InventoryFactory(factory.Factory):
     id = factory.Sequence(lambda n: n)
     inventory_name = FuzzyChoice(choices=["Apple", "Iphone", "telephone"])
     category = FuzzyChoice(choices=["Fruits", "Electronic"])
-    quantity = FuzzyChoice(choices=[20, 30, 40])
+    quantity = FuzzyChoice(choices=[20, 90, 40])
     condition = FuzzyChoice(choices=[Condition.NEW, Condition.OPENED, Condition.USED])
-    restock_level = FuzzyChoice(choices=[100, 110, 120])
+    restock_level = FuzzyChoice(choices=[100, 70, 120])

@@ -236,7 +236,7 @@ class TestYourResourceService(TestCase):
             self.assertEqual(item["quantity"], 100)
 
     def test_create_inventory(self):
-        """It should Create a new Inventory"""
+        """It should Create a new item"""
         test_inventory = InventoryFactory()
         logging.debug("Test Inventory: %s", test_inventory.serialize())
         response = self.client.post(BASE_URL, json=test_inventory.serialize())
@@ -268,11 +268,51 @@ class TestYourResourceService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
+    
+    def test_delete_all_items_while_not_under_test(self):
+        """It should Delete All Items under test only"""
+        self._create_items(1)
+        app.config["TESTING"] = False
+        resp = self.client.delete(BASE_URL)
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        app.config["TESTING"] = True
 
     ######################################################################
     #  T E S T   A C T I O N S
     ######################################################################
+    def test_restock(self):
+        """It should restock an item that is below restock level"""
+        items_few = []
+        while not items_few:  # ensure the factory generates quanlified items
+            inventory = self._create_items(4)
+            items_few = [item for item in inventory if item.quantity <= item.restock_level]
+        item = items_few[0]
+        resp = self.client.put(
+            f"{BASE_URL}/{item.id}/restock", content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        resp = self.client.get(f"{BASE_URL}/{item.id}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        logging.debug("Response data: %s", data)
+        self.assertEqual(int(data["quantity"]) > int(data["restock_level"]), True)
 
+    def test_restock_not_needed(self):
+        """It should not restock an item that is above restock level"""
+        items_many = []
+        while not items_many:
+            inventory = self._create_items(4)
+            items_many = [item for item in inventory if item.quantity > item.restock_level]
+        item = items_many[0]
+        resp = self.client.put(
+            f"{BASE_URL}/{item.id}/restock", content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_restock_not_exist(self):
+        """It should not restock an item that does not exist"""
+        resp = self.client.put(f"{BASE_URL}/0/restock", content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     ######################################################################
     #  T E S T   S A D   P A T H S

@@ -222,7 +222,15 @@ class TestInventoryModel(TestCaseBase):
         """It should not deserialize a bad restock_level attribute"""
         test_inventory = InventoryFactory()
         data = test_inventory.serialize()
-        data["restock_level"] = "aaa"
+        data["restock_level"] = "t3"
+        inventory = Inventory()
+        self.assertRaises(DataValidationError, inventory.deserialize, data)
+    
+    def test_deserialize_bad_condition(self):
+        """It should not deserialize a bad condition value"""
+        test_inventory = InventoryFactory()
+        data = test_inventory.serialize()
+        data["condition"] = "oppen"
         inventory = Inventory()
         self.assertRaises(DataValidationError, inventory.deserialize, data)
 
