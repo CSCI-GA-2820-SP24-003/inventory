@@ -202,27 +202,9 @@ class InventoryCollection(Resource):
         inventory = []
         args = item_args.parse_args()
 
-        name = args["name"]
-        category = args["category"]
-        quantity = args["quantity"]
-        condition = args["condition"]
-        restock_level = args["restock_level"]
-
-        if name:
-            app.logger.info("Filtering by name: %s", name)
-            inventory = Inventory.find_by_inventory_name(name)
-        elif category:
-            app.logger.info("Filtering by category: %s", category)
-            inventory = Inventory.find_by_category(category)
-        elif quantity:
-            app.logger.info("Filtering by quantity: %s", int(quantity))
-            inventory = Inventory.find_by_quantity(int(quantity))
-        elif condition:
-            app.logger.info("Filtering by condition: %s", condition)
-            inventory = Inventory.find_by_condition(condition)
-        elif restock_level:
-            app.logger.info("Filtering by restock_level: %s", int(restock_level))
-            inventory = Inventory.find_by_restock_level(int(restock_level))
+        if args:
+            app.logger.info("Returning filtered list.")
+            inventory = Inventory.search(args)
         else:
             app.logger.info("Returning unfiltered list.")
             inventory = Inventory.all()

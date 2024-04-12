@@ -156,40 +156,23 @@ class Inventory(db.Model):
         """Finds a Inventories by it's ID"""
         logger.info("Processing lookup for id %s ...", inventory_id)
         return cls.query.get(inventory_id)
-
+    
     @classmethod
-    def find_by_inventory_name(cls, name: str) -> list:
-        """Returns all Inventories with the given name
-
-        Args:
-            name (string): the name of the Inventories you want to match
-        """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.inventory_name == name)
-
-    @classmethod
-    def find_by_category(cls, category: str) -> list:
-        """Returns all of the Inventories in a category"""
-        logger.info("Processing category query for %s ...", category)
-        return cls.query.filter(cls.category == category)
-
-    @classmethod
-    def find_by_quantity(cls, quantity: int) -> list:
-        """Returns all of the Inventories in a quantity"""
-        logger.info("Processing quantity query for %s ...", quantity)
-        return cls.query.filter(cls.quantity == quantity)
-
-    @classmethod
-    def find_by_condition(cls, condition: Condition = Condition.NEW) -> list:
-        """Returns all of the Inventories in a condition"""
-        logger.info("Processing quantity query for %s ...", condition)
-        return cls.query.filter(cls.condition == condition)
-
-    @classmethod
-    def find_by_restock_level(cls, restock_level: int) -> list:
-        """Returns all of the Inventories in a restock_level"""
-        logger.info("Processing quantity query for %s ...", restock_level)
-        return cls.query.filter(cls.restock_level == restock_level)
+    def search(cls, args: dict):
+        """Finds an item by multiple criteria"""
+        logger.info("Processing query for multiple filter %s ...", args)
+        query_filter = []
+        if args["name"]:
+            query_filter.append(cls.inventory_name == args["name"])
+        if args["category"]:
+            query_filter.append(cls.category == args["category"])
+        if args["quantity"]:
+            query_filter.append(cls.quantity == int(args["quantity"]))
+        if args["restock_level"]:
+            query_filter.append(cls.restock_level == int(args["restock_level"]))
+        if args["condition"]:
+            query_filter.append(cls.condition == args["condition"])
+        return cls.query.filter(*query_filter)
 
     @classmethod
     def remove_all(cls):
