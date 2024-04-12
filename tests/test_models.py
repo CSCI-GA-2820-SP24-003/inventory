@@ -262,7 +262,7 @@ class TestModelQueries(TestCaseBase):
     """Inventory Model Query Tests"""
 
     def test_find_inventory(self):
-        """It should Find a Inventory by ID"""
+        """It should Find an Item by ID"""
         inventories = InventoryFactory.create_batch(5)
         for inventory in inventories:
             inventory.create()
@@ -278,75 +278,104 @@ class TestModelQueries(TestCaseBase):
         self.assertEqual(inventory.quantity, inventories[1].quantity)
 
     def test_find_by_category(self):
-        """It should Find Inventories by Category"""
-        inventories = InventoryFactory.create_batch(10)
-        for inventory in inventories:
-            inventory.create()
-        category = inventories[0].category
+        """It should Find Items by category"""
+        inventory = InventoryFactory.create_batch(10)
+        for item in inventory:
+            item.create()
+        # pick an arbitrary category
+        selected_category = inventory[0].category
+        # number of items with this category
         count = len(
-            [inventory for inventory in inventories if inventory.category == category]
+            [item for item in inventory if item.category == selected_category]
         )
-        found = Inventory.find_by_category(category)
+        # our search function can handle multiple search criteria
+        # the criteria is in the form of a dict
+        # { field : possible-values-for-the-field }
+        # only one criterion (category) here
+        args = {'name': None,
+                'category': selected_category,
+                'quantity': None,
+                'condition': None,
+                'restock_level': None}
+        found = Inventory.search(args)
+        # should find the same number of qualified items
         self.assertEqual(found.count(), count)
-        for inventory in found:
-            self.assertEqual(inventory.category, category)
-
+        # each item indeed has the selected category
+        for item in found:
+            self.assertEqual(item.category, selected_category)
+    
     def test_find_by_name(self):
-        """It should Find a Inventories by Name"""
-        inventories = InventoryFactory.create_batch(10)
-        for inventory in inventories:
-            inventory.create()
-        name = inventories[0].inventory_name
+        """It should Find Items by Name"""
+        inventory = InventoryFactory.create_batch(10)
+        for item in inventory:
+            item.create()
+        name = inventory[0].inventory_name
         count = len(
-            [inventory for inventory in inventories if inventory.inventory_name == name]
+            [item for item in inventory if item.inventory_name == name]
         )
-        found = Inventory.find_by_inventory_name(name)
+        args = {'name': name,
+                'category': None,
+                'quantity': None,
+                'condition': None,
+                'restock_level': None}
+        found = Inventory.search(args)
         self.assertEqual(found.count(), count)
-        for inventory in found:
-            self.assertEqual(inventory.inventory_name, name)
-
+        for item in found:
+            self.assertEqual(item.inventory_name, name)
+    
     def test_find_by_quantity(self):
-        """It should Find a Inventories by Quantity"""
-        inventories = InventoryFactory.create_batch(10)
-        for inventory in inventories:
-            inventory.create()
-        quantity = inventories[0].quantity
+        """It should Find Items by quantity"""
+        inventory = InventoryFactory.create_batch(10)
+        for item in inventory:
+            item.create()
+        quantity = inventory[0].quantity
         count = len(
-            [inventory for inventory in inventories if inventory.quantity == quantity]
+            [item for item in inventory if item.quantity == quantity]
         )
-        found = Inventory.find_by_quantity(quantity)
+        args = {'name': None,
+                'category': None,
+                'quantity': quantity,
+                'condition': None,
+                'restock_level': None}
+        found = Inventory.search(args)
         self.assertEqual(found.count(), count)
-        for inventory in found:
-            self.assertEqual(inventory.quantity, quantity)
-
+        for item in found:
+            self.assertEqual(item.quantity, quantity)
+    
     def test_find_by_condition(self):
-        """It should Find Inventories by Condition"""
-        inventories = InventoryFactory.create_batch(10)
-        for inventory in inventories:
-            inventory.create()
-        condition = inventories[0].condition
+        """It should Find Items by condition"""
+        inventory = InventoryFactory.create_batch(10)
+        for item in inventory:
+            item.create()
+        condition = inventory[0].condition
         count = len(
-            [inventory for inventory in inventories if inventory.condition == condition]
+            [item for item in inventory if item.condition == condition]
         )
-        found = Inventory.find_by_condition(condition)
+        args = {'name': None,
+                'category': None,
+                'quantity': None,
+                'condition': condition,
+                'restock_level': None}
+        found = Inventory.search(args)
         self.assertEqual(found.count(), count)
-        for inventory in found:
-            self.assertEqual(inventory.condition, condition)
-
+        for item in found:
+            self.assertEqual(item.condition, condition)
+    
     def test_find_by_restock_level(self):
-        """It should Find a Inventories by Restock_level"""
-        inventories = InventoryFactory.create_batch(10)
-        for inventory in inventories:
-            inventory.create()
-        restock_level = inventories[0].restock_level
+        """It should Find Items by restock_level"""
+        inventory = InventoryFactory.create_batch(10)
+        for item in inventory:
+            item.create()
+        restock_level = inventory[0].restock_level
         count = len(
-            [
-                inventory
-                for inventory in inventories
-                if inventory.restock_level == restock_level
-            ]
+            [item for item in inventory if item.restock_level == restock_level]
         )
-        found = Inventory.find_by_restock_level(restock_level)
+        args = {'name': None,
+                'category': None,
+                'quantity': None,
+                'condition': None,
+                'restock_level': restock_level}
+        found = Inventory.search(args)
         self.assertEqual(found.count(), count)
-        for inventory in found:
-            self.assertEqual(inventory.restock_level, restock_level)
+        for item in found:
+            self.assertEqual(item.restock_level, restock_level)

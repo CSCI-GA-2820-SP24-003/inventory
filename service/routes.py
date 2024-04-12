@@ -202,12 +202,8 @@ class InventoryCollection(Resource):
         inventory = []
         args = item_args.parse_args()
 
-        if args:
-            app.logger.info("Returning filtered list.")
-            inventory = Inventory.search(args)
-        else:
-            app.logger.info("Returning unfiltered list.")
-            inventory = Inventory.all()
+        app.logger.info("Returning filtered list.")
+        inventory = Inventory.search(args)
         
         results = [item.serialize() for item in inventory]
         app.logger.info("Returning %d items", len(results))
