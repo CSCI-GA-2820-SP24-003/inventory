@@ -204,7 +204,7 @@ class InventoryCollection(Resource):
 
         app.logger.info("Returning filtered list.")
         inventory = Inventory.search(args)
-        
+
         results = [item.serialize() for item in inventory]
         app.logger.info("Returning %d items", len(results))
         return results, status.HTTP_200_OK
@@ -273,15 +273,15 @@ class RestockResource(Resource):
         item = Inventory.find(id)
         if not item:
             error(status.HTTP_404_NOT_FOUND, f"Item with id '{id}' was not found.")
-        
-        if item.quantity > item.restock_level: 
+
+        if item.quantity > item.restock_level:
             error(
                 status.HTTP_400_BAD_REQUEST,
                 f'No need to restock: '
                 f'quantity [{item.quantity}] greater than '
                 f'restock level [{item.restock_level}]',
             )
-        
+
         # add the number of items sold to restock_level
         # the more we sold, the more we add, vice versa
         # (may use more sophisticated rule)

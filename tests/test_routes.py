@@ -263,7 +263,7 @@ class TestYourResourceService(TestCase):
     def test_get_inventory_not_found(self):
         """It should not Get a Inventory thats not found"""
         non_existent_inventory_id = 99999
-        response = self.client.get(f"{BASE_URL}/99999")
+        response = self.client.get(f"{BASE_URL}/{non_existent_inventory_id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)

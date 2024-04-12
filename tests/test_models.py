@@ -225,7 +225,7 @@ class TestInventoryModel(TestCaseBase):
         data["restock_level"] = "t3"
         inventory = Inventory()
         self.assertRaises(DataValidationError, inventory.deserialize, data)
-    
+
     def test_deserialize_bad_condition(self):
         """It should not deserialize a bad condition value"""
         test_inventory = InventoryFactory()
@@ -311,7 +311,7 @@ class TestModelQueries(TestCaseBase):
         # each item indeed has the selected category
         for item in found:
             self.assertEqual(item.category, selected_category)
-    
+
     def test_find_by_name(self):
         """It should Find Items by Name"""
         inventory = InventoryFactory.create_batch(10)
@@ -330,7 +330,7 @@ class TestModelQueries(TestCaseBase):
         self.assertEqual(found.count(), count)
         for item in found:
             self.assertEqual(item.inventory_name, name)
-    
+
     def test_find_by_quantity(self):
         """It should Find Items by quantity"""
         inventory = InventoryFactory.create_batch(10)
@@ -349,7 +349,7 @@ class TestModelQueries(TestCaseBase):
         self.assertEqual(found.count(), count)
         for item in found:
             self.assertEqual(item.quantity, quantity)
-    
+
     def test_find_by_condition(self):
         """It should Find Items by condition"""
         inventory = InventoryFactory.create_batch(10)
@@ -368,7 +368,7 @@ class TestModelQueries(TestCaseBase):
         self.assertEqual(found.count(), count)
         for item in found:
             self.assertEqual(item.condition, condition)
-    
+
     def test_find_by_restock_level(self):
         """It should Find Items by restock_level"""
         inventory = InventoryFactory.create_batch(10)

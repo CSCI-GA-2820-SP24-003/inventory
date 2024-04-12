@@ -13,8 +13,10 @@ logger = logging.getLogger("flask.app")
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
 
+
 class DatabaseConnectionError(Exception):
     """Custom Exception when database connection fails"""
+
 
 class DataValidationError(Exception):
     """Used for an data validation errors when deserializing"""
@@ -156,7 +158,7 @@ class Inventory(db.Model):
         """Finds a Inventories by it's ID"""
         logger.info("Processing lookup for id %s ...", inventory_id)
         return cls.query.get(inventory_id)
-    
+
     @classmethod
     def search(cls, args: dict):
         """Finds an item by multiple criteria"""

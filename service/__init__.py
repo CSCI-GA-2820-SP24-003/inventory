@@ -30,6 +30,8 @@ api = None  # pylint: disable=invalid-name
 ############################################################
 # Initialize the Flask instance
 ############################################################
+
+
 def create_app():
     """Initialize the core application."""
     # Create Flask application
