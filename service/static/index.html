@@ -64,21 +64,14 @@
               </div>
             </div>
 
-            <!-- RESTOCK_QUANTITY -->
-            <div class="form-group">
-              <label class="control-label col-sm-2" for="inventory_restock_quantity">Restock_Quantity:</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="inventory_restock_quantity" placeholder="Enter quantity for Restock">
-              </div>
-            </div>
-
             <!-- CONDITION -->
             <div class="form-group">
               <label class="control-label col-sm-2" for="inventory_condition">Condition:</label>
               <div class="col-sm-10">
                 <select class="form-control" id="inventory_condition">
-                  <option value="NEW" selected>New</option>
-                  <option value="OPEN">Open</option>
+                  <option value="" selected></option>
+                  <option value="NEW">New</option>
+                  <option value="OPENED">Opened</option>
                   <option value="USED">Used</option>
                 </select>
               </div>
@@ -122,6 +115,9 @@
           </thead>
         </table>
       </div>
+
+      <!-- API Documentation -->
+      <p>API Documentation is <a href='/apidocs'>here</a></p>
 
       <footer>
         <br><br>

@@ -4,12 +4,12 @@ Feature: The inventory service back-end
     So that I can keep track of all my inventory
 
  Background:
-    Given the following inventories
+    Given the following items
         | name       | category     | quantity  | condition  | restock_level  |
         | iphone     | electronics  | 20        | NEW        | 100            |
         | apple      | fruit        | 30        | NEW        | 110            |
         | ipad       | electronics  | 40        | USED       | 120            |
-        | peach      | fruit        | 50        | OPEN       | 130            |
+        | peach      | fruit        | 50        | OPENED       | 130            |
 
 Scenario: The server is running
     When I visit the "Home Page"
@@ -102,8 +102,7 @@ Scenario: Restock
     And the "Name" field should be empty
     And the "Category" field should be empty
     When I paste the "Id" field
-    And I set the "Restock_quantity" to "30"
     And I press the "Restock" button   
     Then I should see the message "Success"
     And I should see "ipod" in the "Name" field
-    And I should see "90" in the "Quantity" field
+    And I should see "240" in the "Quantity" field

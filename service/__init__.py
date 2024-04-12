@@ -20,23 +20,44 @@ and SQL database
 """
 import sys
 from flask import Flask
+from flask_restx import Api
 from service import config
 from service.common import log_handlers
 
+# Will be initialize when app is created
+api = None  # pylint: disable=invalid-name
 
 ############################################################
 # Initialize the Flask instance
 ############################################################
+
+
 def create_app():
     """Initialize the core application."""
     # Create Flask application
     app = Flask(__name__)
     app.config.from_object(config)
 
+    app.url_map.strict_slashes = False
+
     # Initialize Plugins
     # pylint: disable=import-outside-toplevel
     from service.models import db
+
     db.init_app(app)
+
+    # Configure Swagger before initializing it
+    global api
+    api = Api(
+        app,
+        version="1.0.0",
+        title="Inventory REST API Service",
+        description="This is an inventory server.",
+        default="Inventory",
+        default_label="inventory operations",
+        doc="/apidocs",  # default also could use doc='/apidocs/'
+        prefix="/api",
+    )
 
     with app.app_context():
         # Dependencies require we import the routes AFTER the Flask app is created
@@ -44,6 +65,7 @@ def create_app():
         from service import routes, models  # noqa: F401 E402
         from service.common import error_handlers, cli_commands  # noqa: F401, E402
 
+        # try creating all tables of db
         try:
             db.create_all()
         except Exception as error:  # pylint: disable=broad-except

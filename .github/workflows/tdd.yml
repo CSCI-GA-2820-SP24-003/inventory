@@ -1,11 +1,9 @@
-name: TDD CI build
+name: TDD CI Build
 
 on:
   push:
     branches:
       - master
-      # - any-future-branch
-      # you may want the checks for any future branches you push to GitHub
   pull_request:
     branches:
       - master

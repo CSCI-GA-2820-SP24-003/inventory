@@ -1,7 +1,6 @@
 """
 TestYourResourceModel API Service Test Suite
 """
-
 import os
 import logging
 from unittest import TestCase
@@ -14,7 +13,7 @@ DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql+psycopg://postgres:postgres@localhost:5432/testdb"
 )
 
-BASE_URL = "/inventory"
+BASE_URL = "/api/inventory"
 
 
 ######################################################################
@@ -101,7 +100,7 @@ class TestYourResourceService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         id = response.json["id"]
 
-        resp = self.client.delete(f"/inventory/{id}")
+        resp = self.client.delete(f"{BASE_URL}/{id}")
 
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         deleted_inventory = Inventory.find(test_inventory.id)
@@ -111,7 +110,7 @@ class TestYourResourceService(TestCase):
         """Test deleting a non-existent inventory"""
         # Make a DELETE request to delete an inventory item with a non-existent ID
         non_existent_inventory_id = 99999
-        resp = self.client.delete(f"/inventory/{non_existent_inventory_id}")
+        resp = self.client.delete(f"{BASE_URL}/{non_existent_inventory_id}")
 
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -143,7 +142,7 @@ class TestYourResourceService(TestCase):
             "quantity": 100,
         }
         resp = self.client.put(
-            f"/inventory/{non_existent_inventory_id}", json=updated_inventory
+            f"{BASE_URL}/{non_existent_inventory_id}", json=updated_inventory
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -152,11 +151,11 @@ class TestYourResourceService(TestCase):
         test_inventory_1 = InventoryFactory(category="Category1")
         test_inventory_2 = InventoryFactory(category="Category2")
         test_inventory_3 = InventoryFactory(category="Category1")
-        self.client.post("/inventory", json=test_inventory_1.serialize())
-        self.client.post("/inventory", json=test_inventory_2.serialize())
-        self.client.post("/inventory", json=test_inventory_3.serialize())
+        self.client.post(BASE_URL, json=test_inventory_1.serialize())
+        self.client.post(BASE_URL, json=test_inventory_2.serialize())
+        self.client.post(BASE_URL, json=test_inventory_3.serialize())
 
-        response = self.client.get("/inventory?category=Category1")
+        response = self.client.get(f"{BASE_URL}?category=Category1")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
@@ -170,11 +169,11 @@ class TestYourResourceService(TestCase):
         test_inventory_2 = InventoryFactory(inventory_name="Item2")
         test_inventory_3 = InventoryFactory(inventory_name="Item1")
 
-        self.client.post("/inventory", json=test_inventory_1.serialize())
-        self.client.post("/inventory", json=test_inventory_2.serialize())
-        self.client.post("/inventory", json=test_inventory_3.serialize())
+        self.client.post(BASE_URL, json=test_inventory_1.serialize())
+        self.client.post(BASE_URL, json=test_inventory_2.serialize())
+        self.client.post(BASE_URL, json=test_inventory_3.serialize())
 
-        response = self.client.get("/inventory?name=Item1")
+        response = self.client.get(f"{BASE_URL}?name=Item1")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
@@ -188,11 +187,11 @@ class TestYourResourceService(TestCase):
         test_inventory_2 = InventoryFactory(restock_level=100)
         test_inventory_3 = InventoryFactory(restock_level=120)
 
-        self.client.post("/inventory", json=test_inventory_1.serialize())
-        self.client.post("/inventory", json=test_inventory_2.serialize())
-        self.client.post("/inventory", json=test_inventory_3.serialize())
+        self.client.post(BASE_URL, json=test_inventory_1.serialize())
+        self.client.post(BASE_URL, json=test_inventory_2.serialize())
+        self.client.post(BASE_URL, json=test_inventory_3.serialize())
 
-        response = self.client.get("/inventory?restock_level=100")
+        response = self.client.get(f"{BASE_URL}?restock_level=100")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
@@ -205,11 +204,11 @@ class TestYourResourceService(TestCase):
         test_inventory_1 = InventoryFactory(condition=Condition.NEW)
         test_inventory_2 = InventoryFactory(condition=Condition.NEW)
         test_inventory_3 = InventoryFactory(condition=Condition.USED)
-        self.client.post("/inventory", json=test_inventory_1.serialize())
-        self.client.post("/inventory", json=test_inventory_2.serialize())
-        self.client.post("/inventory", json=test_inventory_3.serialize())
+        self.client.post(BASE_URL, json=test_inventory_1.serialize())
+        self.client.post(BASE_URL, json=test_inventory_2.serialize())
+        self.client.post(BASE_URL, json=test_inventory_3.serialize())
 
-        response = self.client.get("/inventory?condition=NEW")
+        response = self.client.get(f"{BASE_URL}?condition=NEW")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
@@ -223,11 +222,11 @@ class TestYourResourceService(TestCase):
         test_inventory_2 = InventoryFactory(quantity=100)
         test_inventory_3 = InventoryFactory(quantity=120)
 
-        self.client.post("/inventory", json=test_inventory_1.serialize())
-        self.client.post("/inventory", json=test_inventory_2.serialize())
-        self.client.post("/inventory", json=test_inventory_3.serialize())
+        self.client.post(BASE_URL, json=test_inventory_1.serialize())
+        self.client.post(BASE_URL, json=test_inventory_2.serialize())
+        self.client.post(BASE_URL, json=test_inventory_3.serialize())
 
-        response = self.client.get("/inventory?quantity=100")
+        response = self.client.get(f"{BASE_URL}?quantity=100")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.get_json()
@@ -236,7 +235,7 @@ class TestYourResourceService(TestCase):
             self.assertEqual(item["quantity"], 100)
 
     def test_create_inventory(self):
-        """It should Create a new Inventory"""
+        """It should Create a new item"""
         test_inventory = InventoryFactory()
         logging.debug("Test Inventory: %s", test_inventory.serialize())
         response = self.client.post(BASE_URL, json=test_inventory.serialize())
@@ -262,48 +261,57 @@ class TestYourResourceService(TestCase):
 
     def test_get_inventory_not_found(self):
         """It should not Get a Inventory thats not found"""
-        response = self.client.get(f"{BASE_URL}/0")
+        non_existent_inventory_id = 99999
+        response = self.client.get(f"{BASE_URL}/{non_existent_inventory_id}")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
 
+    def test_delete_all_items_while_not_under_test(self):
+        """It should Delete All Items under test only"""
+        self._create_items(1)
+        app.config["TESTING"] = False
+        resp = self.client.delete(BASE_URL)
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        app.config["TESTING"] = True
+
     ######################################################################
     #  T E S T   A C T I O N S
     ######################################################################
-
-    def test_restock_default_amount(self):
-        """It should Restock"""
-        inventories = self._create_items(10)
-        inventory = inventories[0]
-        quantity = inventory.quantity
-        response = self.client.put(f"{BASE_URL}/{inventory.id}/restock")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.get(f"{BASE_URL}/{inventory.id}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
+    def test_restock(self):
+        """It should restock an item that is below restock level"""
+        items_few = []
+        while not items_few:  # ensure the factory generates quanlified items
+            inventory = self._create_items(4)
+            items_few = [item for item in inventory if item.quantity <= item.restock_level]
+        item = items_few[0]
+        resp = self.client.put(
+            f"{BASE_URL}/{item.id}/restock", content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        resp = self.client.get(f"{BASE_URL}/{item.id}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
         logging.debug("Response data: %s", data)
-        self.assertEqual(data["quantity"], quantity + 1)
+        self.assertEqual(int(data["quantity"]) > int(data["restock_level"]), True)
 
-    def test_restock_certain_amount(self):
-        """It should Restock in certain number"""
-        inventories = self._create_items(10)
-        inventory = inventories[0]
-        quantity = inventory.quantity
-        response = self.client.put(f"{BASE_URL}/{inventory.id}/restock?quantity=20")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.get(f"{BASE_URL}/{inventory.id}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.get_json()
-        logging.debug("Response data: %s", data)
-        self.assertEqual(data["quantity"], quantity + 20)
+    def test_restock_not_needed(self):
+        """It should not restock an item that is above restock level"""
+        items_many = []
+        while not items_many:
+            inventory = self._create_items(4)
+            items_many = [item for item in inventory if item.quantity > item.restock_level]
+        item = items_many[0]
+        resp = self.client.put(
+            f"{BASE_URL}/{item.id}/restock", content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_restock_exceeds_restock_level(self):
-        """It should not restock"""
-        inventories = self._create_items(10)
-        inventory = inventories[0]
-        response = self.client.put(f"{BASE_URL}/{inventory.id}/restock?quantity=3000")
-        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+    def test_restock_not_exist(self):
+        """It should not restock an item that does not exist"""
+        resp = self.client.put(f"{BASE_URL}/0/restock", content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     ######################################################################
     #  T E S T   S A D   P A T H S
