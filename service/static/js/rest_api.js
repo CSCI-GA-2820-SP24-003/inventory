@@ -55,7 +55,7 @@ $(function () {
         
         let ajax = $.ajax({
             type: "POST",
-            url: "${root}",
+            url: `${root}`,
             contentType: "application/json",
             data: JSON.stringify(data),
         });
