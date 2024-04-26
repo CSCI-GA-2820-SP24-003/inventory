@@ -14,5 +14,5 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN sudo python -m pip install --upgrade pip poetry && \
     sudo poetry config virtualenvs.create false && \
-    sudo poetry lock && \
+    sudo poetry lock --no-update && \
     sudo poetry install
