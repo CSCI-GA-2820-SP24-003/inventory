@@ -12,7 +12,6 @@ RUN cd /tmp; bash ./install-tools.sh
 # Set up the Python development environment
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
-RUN sudo python -m pip install -U pip poetry && \
+RUN sudo python -m pip install --upgrade pip poetry && \
     sudo poetry config virtualenvs.create false && \
-    sudo poetry lock && \
     sudo poetry install
