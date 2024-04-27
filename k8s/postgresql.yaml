@@ -109,5 +109,4 @@ metadata:
 data:
   password: cG9zdGdyZXM=
   database_uri: |
-      cG9zdGdyZXNxbCtwc3ljb3BnOi8vcG9zdGdyZXM6cGdzM2NyM3RAcG9zdGdyZXM6NTQzMi9wZXRz
-      dG9yZQ==
+      cG9zdGdyZXNxbDovL3Bvc3RncmVzOnBvc3RncmVzQHBvc3RncmVzOjU0MzIvcG9zdGdyZXM=
