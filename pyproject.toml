@@ -13,7 +13,7 @@ Flask = "^3.0.2"
 flask-restx = "^1.3.0"
 Flask-SQLAlchemy = "^3.1.1"
 psycopg = {extras = ["binary"], version = "^3.1.17"}
-psycopg2 = {extras = ["binary"], version = "^2.9.5"}
+psycopg2-binary = "^2.9.5"
 retry = "^0.9.2"
 python-dotenv = "^1.0.1"
 gunicorn = "^21.2.0"
