@@ -108,5 +108,4 @@ metadata:
   name: postgres-creds
 data:
   password: cG9zdGdyZXM=
-  database_uri: |
-      cG9zdGdyZXNxbDovL3Bvc3RncmVzOnBvc3RncmVzQHBvc3RncmVzOjU0MzIvcG9zdGdyZXM=
+  database_uri: cG9zdGdyZXNxbDovL3Bvc3RncmVzOnBvc3RncmVzQHBvc3RncmVzOjU0MzIvcG9zdGdyZXM=
