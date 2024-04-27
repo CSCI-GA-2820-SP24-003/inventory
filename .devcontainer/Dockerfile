@@ -22,11 +22,11 @@ FROM python:3.11-slim
 
 # Add any tools that are needed beyond Python 3.11
 RUN apt-get update && \
-    apt-get install -y sudo vim make git zip tree curl wget jq procps net-tools build-dep python-psycopg2 && \
+    apt-get install -y sudo vim make git zip tree curl wget jq procps net-tools build-dep python-psycopg2 libpq-dev && \
     apt-get autoremove -y && \
     apt-get clean -y
 
-RUN sudo python -m pip install psycopg2-binary 
+RUN sudo python -m pip install psycopg2 psycopg2-binary 
 
 # Create a user for development
 ARG USERNAME=vscode
