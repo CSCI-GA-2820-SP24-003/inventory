@@ -78,7 +78,6 @@ RUN apt-get update && \
 RUN pip install psycopg2-binary
 
 # If compare3 is causing issues with Poetry, install it separately using pip
-RUN pip install compare3==1.0.4
 
 # Set up a user for development purposes with passwordless sudo privileges
 ARG USERNAME=vscode
