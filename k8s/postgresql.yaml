@@ -107,6 +107,6 @@ kind: Secret
 metadata:
   name: postgres-creds
 data:
-  password: cG9zdGdyZXM=
+  password: cGdzM2NyM3Q=
   database_uri: |
       cG9zdGdyZXNxbCtwc3ljb3BnOi8vcG9zdGdyZXM6cGdzM2NyM3RAcG9zdGdyZXM6NTQzMi9wb3N0Z3Jlcw==
