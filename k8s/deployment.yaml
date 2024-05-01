@@ -24,7 +24,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: nyu-project
-        image: cluster-registry:32000/inventory:lastest
+        image: cluster-registry:32000/nyu-project:lastest
         image: nyu-project
         imagePullPolicy: IfNotPresent
         ports:
