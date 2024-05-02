@@ -893,6 +893,23 @@ files = [
 ]
 
 [[package]]
+name = "honcho"
+version = "1.1.0"
+description = "Honcho: a Python clone of Foreman. For managing Procfile-based applications."
+optional = false
+python-versions = "*"
+files = [
+    {file = "honcho-1.1.0-py2.py3-none-any.whl", hash = "sha256:a4d6e3a88a7b51b66351ecfc6e9d79d8f4b87351db9ad7e923f5632cc498122f"},
+    {file = "honcho-1.1.0.tar.gz", hash = "sha256:c5eca0bded4bef6697a23aec0422fd4f6508ea3581979a3485fc4b89357eb2a9"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+export = ["jinja2 (>=2.7,<3)"]
+
+[[package]]
 name = "httpie"
 version = "3.2.2"
 description = "HTTPie: modern, user-friendly command-line HTTP client for the API era."
@@ -2651,4 +2668,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0e66b26d63f6bfb52f8334da455e34a2e5b0fc80ea4a4de31cddde698648f5b1"
+content-hash = "0b8fcf5f2a3c8db53a4c71c8ec51b30cbb5a74378b437fe5505dc64f0a1284f8"
